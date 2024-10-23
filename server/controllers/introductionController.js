@@ -2,13 +2,14 @@ const introductionModel = require("../models/introductionModel");
 // Create an introduction
 exports.createIntroduction = async (req, res) => {
     try {
-        const { fullName, status, title, socialLinks, image } = req.body;
+        const { fullName, status, title, socialLinks, image,about } = req.body;
         const introduction = new introductionModel({
             fullName,
             status,
             title,
             socialLinks,
-            image
+            image,
+            about
         });
 
         if(fullName.length < 3){
@@ -80,10 +81,10 @@ exports.getIntroductionById = async (req, res) => {
 // Update an introduction
 exports.updateIntroduction = async (req, res) => {
     try {
-        const { fullName, status, title, socialLinks, image } = req.body;
+        const { fullName, status, title, socialLinks, image,about } = req.body;
         const introduction = await introductionModel.findByIdAndUpdate(
             req.params.introId,
-            { fullName, status, title, socialLinks, image },
+            { fullName, status, title, socialLinks, image,about },
             { new: true, runValidators: true }
         );
 
