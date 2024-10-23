@@ -56,7 +56,7 @@ exports.getAllIntroductions = async (req, res) => {
 // Get introduction by ID
 exports.getIntroductionById = async (req, res) => {
     try {
-        const introduction = await introductionModel.findById(req.params.id);
+        const introduction = await introductionModel.findById(req.params.introId);
 
         if (!introduction) {
             return res.status(404).json({
@@ -82,7 +82,7 @@ exports.updateIntroduction = async (req, res) => {
     try {
         const { fullName, status, title, socialLinks, image } = req.body;
         const introduction = await introductionModel.findByIdAndUpdate(
-            req.params.id,
+            req.params.introId,
             { fullName, status, title, socialLinks, image },
             { new: true, runValidators: true }
         );
@@ -109,7 +109,7 @@ exports.updateIntroduction = async (req, res) => {
 // Delete an introduction
 exports.deleteIntroduction = async (req, res) => {
     try {
-        const introduction = await introductionModel.findByIdAndDelete(req.params.id);
+        const introduction = await introductionModel.findByIdAndDelete(req.params.introId);
 
         if (!introduction) {
             return res.status(404).json({

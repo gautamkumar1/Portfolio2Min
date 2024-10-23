@@ -11,18 +11,18 @@ const isAuthenticated = async (req, res, next) => {
 
     // Extract the token from the Bearer string
     const token = authHeader.split(" ")[1];
-    console.log(`token : ${token}`);
+    // console.log(`token : ${token}`);
     
 
     try {
         
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(`decoded : ${decoded}`);
+        // console.log(`decoded : ${decoded}`);
         
 
         
         req.user = await User.findById(decoded._id);
-        console.log(`userId ${decoded.id} and req.user : ${req.user}`);
+        // console.log(`userId ${decoded.id} and req.user : ${req.user}`);
         
 
         
