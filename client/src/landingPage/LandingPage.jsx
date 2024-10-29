@@ -1,115 +1,40 @@
-'use client'
-
-import { Github, Sun, Menu, X } from "lucide-react"
-import { useState } from "react"
-import { Button } from "../components/ui/button"
+import { Button } from "@/components/ui/button"
 
 export default function LandingPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
-
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <header className="border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <svg
-              className="w-8 h-8 text-blue-500"
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-              <path d="M12 4v1M17.66 6.344l-.828.828M20.005 12.004h-1M17.66 17.664l-.828-.828M12 20.01V19M6.34 17.664l.835-.836M3.995 12.004h1.01M6 6l.835.836" />
-            </svg>
-            <span className="text-2xl font-bold">tailus</span>
-          </div>
-          <nav className="hidden md:flex space-x-6">
-            <a className="text-gray-600 hover:text-gray-900" href="#">
-              Guide
-            </a>
-            <a className="text-gray-600 hover:text-gray-900" href="#">
-              Templates
-            </a>
-            <a className="text-gray-600 hover:text-gray-900" href="#">
-              Blocks
-            </a>
-            <a className="text-gray-600 hover:text-gray-900" href="#">
-              Snippets
-            </a>
-          </nav>
-          <div className="hidden md:flex items-center space-x-4">
-            <Github className="w-6 h-6" />
-            <Sun className="w-6 h-6" />
-          </div>
-          <button className="md:hidden" onClick={toggleMenu}>
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+    <div className="min-h-screen bg-[#0C0A09] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12">
+      <div className="w-full max-w-[90%] md:max-w-4xl text-center space-y-6 md:space-y-8">
+        {/* Heading with responsive font sizes and padding */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight bg-gradient-to-r from-indigo-400 to-green-400 text-transparent bg-clip-text px-2">
+          Build Your Portfolio in Just 2 Minutes!
+        </h1>
+
+        {/* Subheading with responsive text and width */}
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-zinc-400 max-w-xs sm:max-w-lg md:max-w-2xl mx-auto px-2">
+          Effortlessly create a stunning portfolio and showcase your talents instantly with our intuitive generator!
+        </p>
+
+        {/* Button container with improved responsive layout */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-4 px-2">
+          {/* Primary Button - Made responsive with consistent width */}
+          <button className="relative block group w-full sm:w-48">
+            <span className="absolute inset-0 bg-indigo-500 rounded-lg"></span>
+            <div className="relative bg-zinc-950 border-2 border-indigo-500 rounded-lg transition-all duration-200 -translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0">
+              <div className="px-4 sm:px-6 py-3">
+                <p className="text-base sm:text-lg font-semibold text-white whitespace-nowrap">
+                  Get Started
+                </p>
+              </div>
+            </div>
+          </button>
+
+          {/* Secondary Button - Made responsive with consistent width */}
+          <button className="w-full sm:w-48 bg-zinc-950 text-zinc-300 border border-zinc-700 border-b-4 font-medium overflow-hidden relative px-4 sm:px-6 py-3 rounded-lg hover:brightness-110 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group">
+            <span className="bg-zinc-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
+            <span className="text-base sm:text-lg whitespace-nowrap">Learn More</span>
           </button>
         </div>
-        {isMenuOpen && (
-          <div className="md:hidden">
-            <nav className="flex flex-col space-y-4 px-4 py-6 bg-gray-50">
-              <a className="text-gray-600 hover:text-gray-900" href="#">
-                Guide
-              </a>
-              <a className="text-gray-600 hover:text-gray-900" href="#">
-                Templates
-              </a>
-              <a className="text-gray-600 hover:text-gray-900" href="#">
-                Blocks
-              </a>
-              <a className="text-gray-600 hover:text-gray-900" href="#">
-                Snippets
-              </a>
-              <div className="flex items-center space-x-4 pt-4">
-                <Github className="w-6 h-6" />
-                <Sun className="w-6 h-6" />
-              </div>
-            </nav>
-          </div>
-        )}
-      </header>
-      <main className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">
-          Easy to customize
-          <br />
-          Modern Tailwindcss
-          <br />
-          <span className="relative">
-            Templates
-            <span className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></span>
-          </span>
-        </h1>
-        <p className="text-xl text-gray-600 mb-8">High Page Speed - Accessible - Fully Responsive</p>
-        <div className="flex justify-center space-x-4">
-          <Button size="lg">Browse</Button>
-          <Button variant="outline" size="lg">
-            Affiliates
-            <svg
-              className="w-4 h-4 ml-2"
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </Button>
-        </div>
-      </main>
+      </div>
     </div>
   )
 }
