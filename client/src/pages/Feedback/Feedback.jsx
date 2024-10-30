@@ -1,97 +1,106 @@
-import { useState, React } from "react";
-import { Button } from "../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Input } from "../../../components/ui/input";
-import { Textarea } from "../../../components/ui/textarea";
-import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
 
-export default function Feedback() {
-  // Simulated feedback data
-  const [feedbacks, setFeedbacks] = useState([
-    { id: 1, username: "Gautam", message: "Great experience using this platform!" },
-    { id: 2, username: "Ananya", message: "The new features are really helpful." },
-    { id: 3, username: "Rohit_Tech", message: "Would love to see more tutorials." },
-    { id: 4, username: "Amit", message: "The new features are really helpful." },
-  ]);
+import { useState } from "react"
+import { Button } from "../../components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card"
+import { Input } from "../../../components/ui/input"
+import { Label } from "../../../components/ui/label"
+import { Textarea } from "../../../components/ui/textarea"
+import { ScrollArea } from "../../../components/ui/scroll-area"
 
-  const [newFeedback, setNewFeedback] = useState("");
+// Sample feedback data
+const initialFeedbacks = [
+  { id: 1, name: "John Doe", message: "Great service! Very satisfied with the product." },
+  { id: 2, name: "Jane Smith", message: "The customer support was excellent. Thank you!" },
+  { id: 3, name: "Mike Johnson", message: "Could use some improvements in the user interface." },
+  { id: 4, name: "Sarah Williams", message: "Fast delivery and good quality. Will order again." },
+  { id: 5, name: "Chris Brown", message: "Decent experience overall, but there's room for improvement." },
+]
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!newFeedback.trim()) return;
+export default function FeedbackSection() {
+  const [feedbacks, setFeedbacks] = useState(initialFeedbacks)
+  const [name, setName] = useState("")
+  const [message, setMessage] = useState("")
 
-    // Add new feedback at the beginning of the list
-    setFeedbacks([
-      {
+  const handleSubmit = (t) => {
+    e.preventDefault()
+    if (name && message) {
+      const newFeedback = {
         id: feedbacks.length + 1,
-        username: "current_user", // Replace with dynamic username in real app
-        message: newFeedback.trim(),
-      },
-      ...feedbacks,
-    ]);
-    setNewFeedback("");
-  };
+        name,
+        message,
+      }
+      setFeedbacks([...feedbacks, newFeedback])
+      setName("")
+      setMessage("")
+    }
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div className="container mx-auto p-4 bg-[#0C0A09]">
       <div className="col-span-2 flex justify-center mb-6">
-        <h1 className="text-2xl font-bold text-center">Share Your Thoughts on Portfolio2Min!</h1>
+        <h1 className="text-2xl font-bold text-center">&#8203;</h1>
       </div>
-      <div className="grid gap-6 md:grid-cols-2 max-w-3xl w-full">
-        
-        {/* Existing Feedback Display */}
-        <Card className="md:order-1">
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">Share Your Thoughts on Portfolio2Min!</h1>
+      <div className="flex flex-col md:flex-row gap-6">
+        <Card className="flex-1 border-zinc-700">
           <CardHeader>
-            <CardTitle>Recent Feedback</CardTitle>
+            <CardTitle className="text-white">Recent Feedbacks</CardTitle>
+            <CardDescription>See what others are saying about us</CardDescription>
           </CardHeader>
-          <CardContent>
-            {/* Add a scrollable container with a fixed max height */}
-            <div className="space-y-4 max-h-[400px] overflow-y-auto">
+          <CardContent className="border-zinc-700">
+            <ScrollArea className="h-[400px] md:h-[600px]">
               {feedbacks.map((feedback) => (
-                <div key={feedback.id} className="flex items-start gap-3 p-4 rounded-lg border">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>{feedback.username[0].toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">@{feedback.username}</p>
-                    <p className="text-sm text-muted-foreground">{feedback.message}</p>
-                  </div>
-                </div>
+                <Card key={feedback.id} className="mb-4">
+                  <CardHeader>
+                    <CardTitle className="text-white ">{feedback.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{feedback.message}</p>
+                  </CardContent>
+                </Card>
               ))}
-            </div>
+            </ScrollArea>
           </CardContent>
         </Card>
-
-        {/* Feedback Submission Form */}
-        <Card className="md:order-2">
+        <Card className="flex-1 border-zinc-700">
           <CardHeader>
-            <CardTitle>Submit Feedback</CardTitle>
+            <CardTitle className="text-white">Submit Your Feedback</CardTitle>
+
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  placeholder="Your username"
-                  defaultValue="current_user"
-                  disabled
-                  className="max-w-[200px]"
-                />
+            <form onSubmit={handleSubmit}>
+              <div className="grid w-full items-center gap-4">
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name" className="text-white">Name</Label>
+                  <Input
+                    id="name"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="message" className="text-white">Your Feedback</Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Share your thoughts..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Textarea
-                  placeholder="Write your feedback here..."
-                  value={newFeedback}
-                  onChange={(e) => setNewFeedback(e.target.value)}
-                  className="min-h-[150px]"
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                Submit Feedback
-              </Button>
             </form>
           </CardContent>
+          <CardFooter>
+            <Button className="w-full bg-white text-black hover:bg-white hover:text-black" onClick={handleSubmit}>
+              Submit Feedback
+            </Button>
+
+
+
+          </CardFooter>
         </Card>
       </div>
     </div>
-  );
+  )
 }
