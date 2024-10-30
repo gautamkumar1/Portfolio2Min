@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Portfolio2MinLogo from '../../assets/Portfolio2Min_Logo.png';
+import { AvatarDemo } from './Avatar';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
     { to: "/howitworks", label: "How It Works" },
     { to: "/features", label: "Features" },
-    { to: "/history", label: "History" },
-    { to: "/services", label: "Services" },
+    { to: "/feedback", label: "Feedback" },
     { to: "/projects", label: "Projects" },
     { to: "/blog", label: "Blog" }
   ];
@@ -65,7 +65,7 @@ const Navbar = () => {
           >
             <Link to="/register">Register</Link>
           </Button>
-
+          <AvatarDemo/>
           {/* Mobile Menu Button */}
           <div className="flex md:hidden">
             <Button
