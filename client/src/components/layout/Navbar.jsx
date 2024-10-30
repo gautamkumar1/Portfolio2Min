@@ -7,7 +7,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
-    { to: "/about", label: "About" },
+    { to: "/howitworks", label: "How It Works" },
     { to: "/careers", label: "Careers" },
     { to: "/history", label: "History" },
     { to: "/services", label: "Services" },

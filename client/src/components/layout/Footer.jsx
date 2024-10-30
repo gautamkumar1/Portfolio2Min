@@ -43,43 +43,43 @@ const SocialLink = ({
 }
 
 const Footer = () => {
-    return (
-      <div className="fixed bottom-0 left-0 w-full border-t border-white-900/5 dark:border-white-600 py-4 px-4 bg-gray-900 text-white">
-        <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
-          
-          {/* Left-aligned 'Made By' section */}
-          <div className="text-center md:text-left text-sm text-gray-300 dark:text-gray-400">
-            Made with 💖 by Gautam
-          </div>
-          
-          {/* Center-aligned Copyright Section */}
-          <p className="text-center text-xs md:text-sm text-gray-300 dark:text-gray-400">
-            &copy; {new Date().getFullYear()}{' '}
-            <a
-              href="https://twitter.com/justansub"
-              className="text-green-500 font-semibold underline hover:text-red-500"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Portfolio2Min
-            </a>
-          </p>
-          
-          {/* Right-aligned Social Links */}
-          <div className="flex flex-col items-center gap-2 md:flex-row md:gap-4">
-            <SocialLink href="https://twitter.com/justansub" icon={XIcon} className="text-gray-400 hover:text-blue-500">
-              X
-            </SocialLink>
-            <SocialLink href="http://github.com/ansub" icon={GitHubIcon} className="text-gray-400 hover:text-white">
-              GitHub
-            </SocialLink>
-            <SocialLink href="https://discord.gg/P8GXYyH3ZU" icon={DiscordIcon} className="text-gray-400 hover:text-purple-500">
-              Discord
-            </SocialLink>
-          </div>
+  return (
+    <footer className="w-full border-gray-300 dark:border-gray-600 bg-[#0C0A09] text-white py-4">
+      <div className="container mx-auto flex flex-col items-center gap-4 md:flex-row md:justify-between px-4">
+        
+        {/* Left-aligned 'Made By' section */}
+        <div className="flex-1 text-center md:text-left text-sm text-gray-300 dark:text-gray-400">
+          Made with 💖 by Gautam
+        </div>
+        
+        {/* Center-aligned Copyright Section */}
+        <p className="flex-1 text-center text-xs md:text-sm text-gray-300 dark:text-gray-400">
+          &copy; {new Date().getFullYear()}{' '}
+          <a
+            href="https://twitter.com/justansub"
+            className="text-green-500 font-semibold underline hover:text-red-500"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Portfolio2Min
+          </a>
+        </p>
+        
+        {/* Right-aligned Social Links */}
+        <div className="flex-1 flex justify-center md:justify-end gap-4">
+          <SocialLink href="https://twitter.com/justansub" icon={XIcon} className="text-gray-400 hover:text-blue-500">
+            X
+          </SocialLink>
+          <SocialLink href="http://github.com/ansub" icon={GitHubIcon} className="text-gray-400 hover:text-white">
+            GitHub
+          </SocialLink>
+          <SocialLink href="https://discord.gg/P8GXYyH3ZU" icon={DiscordIcon} className="text-gray-400 hover:text-purple-500">
+            Discord
+          </SocialLink>
         </div>
       </div>
-    );
-  };
-  
+    </footer>
+  );
+};
+
 export default Footer
