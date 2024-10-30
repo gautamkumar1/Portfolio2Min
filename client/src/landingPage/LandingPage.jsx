@@ -1,3 +1,4 @@
+import Faq from "../pages/Faq/Faq";
 import Features from "../pages/Features/Features"
 import HowItWorks from "../pages/How it works/HowItWorks"
 import { HeroVideoDialogDemoTopInBottomOut } from "./HeroVideo"
@@ -79,6 +80,12 @@ export default function LandingPage() {
 
       {/* Features Section - Now full width */}
       <Features />
+
+      {/* FAQ */}
+      <div>
+      <Faq/>
+      </div>
     </div>
+
   );
 }
