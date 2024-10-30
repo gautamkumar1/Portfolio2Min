@@ -5,6 +5,7 @@ import LandingPage from './landingPage/LandingPage'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
 import HowItWorks from './pages/How it works/HowItWorks'
+import Features from './pages/Features/Features'
 
 
 
@@ -29,6 +30,10 @@ function App() {
     {
       path:"/howitworks",
       element: <HowItWorks/>
+    },
+    {
+      path:"/features",
+      element: <Features/>
     }
       ]
     }

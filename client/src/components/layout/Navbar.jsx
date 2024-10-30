@@ -8,7 +8,7 @@ const Navbar = () => {
 
   const navLinks = [
     { to: "/howitworks", label: "How It Works" },
-    { to: "/careers", label: "Careers" },
+    { to: "/features", label: "Features" },
     { to: "/history", label: "History" },
     { to: "/services", label: "Services" },
     { to: "/projects", label: "Projects" },
