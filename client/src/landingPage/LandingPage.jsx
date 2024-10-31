@@ -2,6 +2,7 @@ import Faq from "../pages/Faq/Faq";
 import Features from "../pages/Features/Features"
 import HowItWorks from "../pages/How it works/HowItWorks"
 import { HeroVideoDialogDemoTopInBottomOut } from "./HeroVideo"
+import { SafariMockup } from "./SafariMockup";
 
 export default function LandingPage() {
   return (
@@ -72,7 +73,10 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-
+{/* Mockup */}
+<div>
+  <SafariMockup/>
+</div>
       {/* How It Works Section */}
       <div className="w-full">
         <HowItWorks />
