@@ -7,6 +7,7 @@ import HowItWorks from './pages/How it works/HowItWorks'
 import Features from './pages/Features/Features'
 import Feedback from './pages/Feedback/Feedback'
 import ErrorPage from './pages/Error Page/ErrorPage'
+import Portfolio from './pages/Portfolio/Portfolio'
 
 
 
@@ -44,6 +45,11 @@ function App() {
     {
       path:"*",
       element: <ErrorPage/>
+    }
+    ,
+    {
+      path:"/user-portfolio",
+      element: <Portfolio/>
     }
     
   ]

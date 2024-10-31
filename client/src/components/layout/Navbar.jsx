@@ -16,7 +16,7 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-gray-900 backdrop-blur-sm bg-opacity-90 border-b border-gray-800 z-50">
+    <header className="top-0 left-0 right-0 bg-gray-900 backdrop-blur-sm bg-opacity-90 border-b border-gray-800 z-50">
       <div className="flex h-16 items-center justify-between px-4 md:px-8 lg:px-12">
         {/* Logo Section with Text */}
         <div className="flex items-center space-x-2">

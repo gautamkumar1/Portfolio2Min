@@ -44,7 +44,7 @@ const SocialLink = ({
 
 const Footer = () => {
   return (
-    <footer className="w-full border-gray-300 dark:border-gray-600 bg-[#0C0A09] text-white py-4">
+    <footer className="w-full border-gray-300 border-t  dark:border-gray-600 bg-[#0C0A09] text-white py-4">
       <div className="container mx-auto flex flex-col items-center gap-4 md:flex-row md:justify-between px-4">
         
         {/* Left-aligned 'Made By' section */}

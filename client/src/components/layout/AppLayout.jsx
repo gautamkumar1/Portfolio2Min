@@ -1,15 +1,19 @@
 import React from 'react'
 import Navbar from './Navbar'
 import Footer from './Footer'
-import { Outlet } from 'react-router-dom'
+import { Outlet,useLocation} from 'react-router-dom'
 
 
 function AppLayout() {
+  const location = useLocation();
+  const hideLayout = location.pathname === "/user-portfolio";
   return (
     <>
-      <Navbar />
-      <Outlet/>
-      <Footer />
+      <div>
+      {!hideLayout && <Navbar />}
+      <Outlet />
+      {!hideLayout && <Footer />}
+    </div>
     </>
   )
 }
