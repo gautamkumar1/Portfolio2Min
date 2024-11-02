@@ -10,11 +10,13 @@ import ErrorPage from './pages/Error Page/ErrorPage'
 import Portfolio from './pages/Portfolio/Portfolio'
 import Userdashboard from './pages/UserDashbaord/Userdashboard'
 import Introduction from './pages/UserDashbaord/Introduction/Introduction'
-
+import useAuthStore from './Zustand/Auth Store/useAuthStore'
 
 
 
 function App() {
+
+  const {isAuthenticated} = useAuthStore()
   const router = createBrowserRouter([
     {
       path: "/",
@@ -55,12 +57,9 @@ function App() {
     },
     {
       path:"/user-dashboard/*",
-      element: <Userdashboard/>
+      element: isAuthenticated ? <Userdashboard /> : <Login />
     },
-    {
-      path:"/intro",
-      element: <Introduction/>
-    }
+    
     
   ]
     }

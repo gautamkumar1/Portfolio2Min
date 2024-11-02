@@ -13,12 +13,6 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "../../../components/ui/dropdown-menu";
 import { cn } from "../../lib/utils";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./Home/Home";
@@ -27,12 +21,14 @@ import UserEduaction from "./Education/UserEduaction";
 import UserSkills from "./Skills/UserSkills";
 import UserProjects from "./Projects/UserProjects";
 import UserExperience from "./Experience/UserExperience";
+import useAuthStore from "../../Zustand/Auth Store/useAuthStore";
 
 export default function UserDashboard() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-
+  const { logout } = useAuthStore();
+  
   const navigation = [
     { name: 'Home', icon: LayoutDashboard, to: '/' },
     { name: 'Introduction', icon: User, to: '/user-dashboard/introduction' },
@@ -48,6 +44,12 @@ export default function UserDashboard() {
   const handleNavigation = (to) => {
     navigate(to);
     setIsMobileMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    alert("Logged out successfully!");
+    navigate("/");
   };
 
   return (
@@ -108,25 +110,22 @@ export default function UserDashboard() {
           </nav>
 
           <div className="p-4 border-t border-gray-700">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    "w-full hover:bg-gray-700",
-                    isCollapsed ? "justify-center" : "justify-start gap-2"
-                  )}
-                >
-                  <LogOut className="h-5 w-5 flex-shrink-0" />
-                  {!isCollapsed && <span>Logout</span>}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onSelect={() => { /* Logout logic here */ }}>
-                  Confirm Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full hover:bg-gray-700",
+                isCollapsed ? "justify-center" : "justify-start gap-2"
+              )}
+              onClick={handleLogout}
+            >
+              <LogOut className="h-5 w-5 flex-shrink-0" />
+              {!isCollapsed && <span>Logout</span>}
+              {isCollapsed && (
+                <span className="absolute left-14 bg-gray-700 text-white rounded-md px-2 py-1 text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                  Logout
+                </span>
+              )}
+            </Button>
           </div>
         </div>
       </aside>
@@ -171,7 +170,7 @@ export default function UserDashboard() {
               <Button
                 variant="ghost"
                 className="w-full justify-start gap-2 hover:bg-gray-700"
-                onClick={() => { /* Logout logic here */ }}
+                onClick={handleLogout}
               >
                 <LogOut className="h-5 w-5 flex-shrink-0" />
                 <span>Logout</span>

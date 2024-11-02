@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Portfolio2MinLogo from '../../assets/Portfolio2Min_Logo.png';
 // import { AvatarDemo } from './Avatar';
+import useAuthStore from "../../Zustand/Auth Store/useAuthStore"
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const {isAuthenticated} = useAuthStore();
   const navLinks = [
     { to: "/howitworks", label: "How It Works" },
     { to: "/features", label: "Features" },
@@ -50,6 +51,15 @@ const Navbar = () => {
 
         {/* Auth Buttons and Mobile Menu */}
         <div className="flex items-center gap-2 md:gap-4">
+         {isAuthenticated ? (<>
+          <Button 
+            asChild 
+            variant="default" 
+            className="bg-green-500 hover:bg-green-600 text-white rounded-full px-6 transition-all duration-200"
+          >
+            <Link to="/user-dashboard">User Dashboard</Link>
+          </Button>
+         </>) : (<>
           <Button 
             asChild 
             variant="default" 
@@ -57,14 +67,14 @@ const Navbar = () => {
           >
             <Link to="/login">Login</Link>
           </Button>
-          
           <Button 
             asChild 
-            variant="outline" 
-            className="bg-transparent text-white hover:bg-gray-800 border border-gray-700 rounded-full px-6 transition-all duration-200"
+            variant="default" 
+            className="bg-[#09090B] hover:bg-green-600 text-white rounded-full px-6 transition-all duration-200"
           >
             <Link to="/register">Register</Link>
           </Button>
+         </>)}
           {/* <AvatarDemo/> */}
           {/* Mobile Menu Button */}
           <div className="flex md:hidden">

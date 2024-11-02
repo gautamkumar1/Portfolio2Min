@@ -3,8 +3,51 @@ import { Link } from "react-router-dom";
 import { Mail, Lock, User } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import Input from "../../components/ui/Input";
+import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export default function Register() {
+  const [user,setUser] = useState({
+    username:'',
+    email:'',
+    password:''
+  })
+  const [loading, setLoading] = useState(false);
+  const handelInput = (e) => {
+    const { name, value } = e.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value
+    }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(user),
+      });
+      const responseData = await response.json();
+      if (response.ok) {
+        alert("Registration successful");
+        const decodedToken = jwtDecode(responseData.token);
+        localStorage.setItem("userData", JSON.stringify(decodedToken));
+        setUser({ username: "", email: "", password: ""});
+        setLoading(false);
+      } else {
+        alert(responseData.message);
+        
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#0C0A09]">
       <motion.div
@@ -19,13 +62,14 @@ export default function Register() {
               Create an Account
             </h2>
 
-            <form>
+            <form onSubmit={handleSubmit}>
               <Input
                 icon={User}
                 type='username'
                 placeholder='Username'
                 name='username'
-                
+                value={user.username} 
+                onChange={handelInput}
               />
 
               <Input
@@ -33,6 +77,8 @@ export default function Register() {
                 type="email"
                 placeholder="Enter your email"
                 name="email"
+                value={user.email} 
+                onChange={handelInput}
               />
 
               <Input
@@ -40,6 +86,8 @@ export default function Register() {
                 type="password"
                 placeholder="Password"
                 name="password"
+                value={user.password} 
+                onChange={handelInput}
               />
 
               <div className="mt-4">
@@ -48,7 +96,7 @@ export default function Register() {
                   type="submit"
                   className="w-full bg-gradient-to-r from-teal-400 to-green-500 text-white hover:from-teal-500 hover:to-cyan-600"
                 >
-                 Submit
+                {loading ? "Loading..." : "Sign Up"}
                 </Button>
               </div>
             </form>

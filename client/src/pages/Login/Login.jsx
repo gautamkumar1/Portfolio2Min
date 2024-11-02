@@ -1,10 +1,57 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import Input from "../../components/ui/Input";
-
+import { useState } from "react";
+import useAuthStore from "../../Zustand/Auth Store/useAuthStore"
+import { useNavigate } from "react-router-dom"
+import { jwtDecode } from "jwt-decode";
 export default function Login() {
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
+  const [user,setUser] = useState({
+    email:'',
+    password:''
+  })
+  const [loading, setLoading] = useState(false);
+  const handelInput = (e) => {
+    const { name, value } = e.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value
+    }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(user),
+      });
+      const userData = await response.json();
+      if (response.ok) {
+        login(userData);
+        alert("Login successful");
+        const decodedToken = jwtDecode(userData.token);
+        localStorage.setItem("userData", JSON.stringify(decodedToken));
+        setUser({email: "", password: ""});
+        navigate("/user-dashboard");
+        setLoading(false);
+      } else {
+        alert(userData.message);
+        
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#0C0A09]">
       <motion.div
@@ -19,12 +66,14 @@ export default function Login() {
               Welcome to Portfolio2Min
             </h2>
 
-            <form>
+            <form onSubmit={handleSubmit}>
               <Input
                 icon={Mail}
                 type="email"
                 placeholder="Enter your email"
                 name="email"
+                value={user.email} 
+                onChange={handelInput}
               />
 
               <Input
@@ -32,6 +81,8 @@ export default function Login() {
                 type="password"
                 placeholder="Password"
                 name="password"
+                value={user.password} 
+                onChange={handelInput}
               />
 
               <div className="mt-4">
@@ -40,7 +91,7 @@ export default function Login() {
                   type="submit"
                   className="w-full bg-gradient-to-r from-teal-400 to-green-500 text-white hover:from-teal-500 hover:to-cyan-600"
                 >
-                  Let's Go
+                  {loading ? "Loading..." : "Let's Go"}
                 </Button>
               </div>
             </form>
