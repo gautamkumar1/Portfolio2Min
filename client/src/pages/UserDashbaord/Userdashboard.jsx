@@ -26,6 +26,7 @@ import Introduction from "./Introduction/Introduction";
 import UserEduaction from "./Education/UserEduaction";
 import UserSkills from "./Skills/UserSkills";
 import UserProjects from "./Projects/UserProjects";
+import UserExperience from "./Experience/UserExperience";
 
 export default function UserDashboard() {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -210,6 +211,7 @@ export default function UserDashboard() {
             <Route path="introduction" element={<Introduction />} />
             <Route path="education" element={<UserEduaction />} />
             <Route path="skills" element={<UserSkills />} />
+            <Route path="experience" element={<UserExperience />} />
             <Route path="projects" element={<UserProjects />} />
           </Routes>
         </div>

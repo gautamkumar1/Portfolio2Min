@@ -65,6 +65,7 @@ export default function Introduction() {
                 <Input 
                   id="fullName" 
                   name="fullName" 
+                  placeholder="Enter your full name"
                   value={formData.fullName} 
                   onChange={handleChange} 
                   required 
@@ -78,9 +79,9 @@ export default function Introduction() {
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700">
-                    <SelectItem value="available" className="hover:bg-gray-700">Available</SelectItem>
-                    <SelectItem value="busy" className="hover:bg-gray-700">Busy</SelectItem>
-                    <SelectItem value="offline" className="hover:bg-gray-700">Offline</SelectItem>
+                    <SelectItem value="available" className="hover:bg-gray-700 text-green-400">#openToWork</SelectItem>
+                    <SelectItem value="busy" className="hover:bg-gray-700 text-green-400" >Hire Me!</SelectItem>
+                    <SelectItem value="offline" className="hover:bg-gray-700 text-green-400">Open to Opportunity</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -90,6 +91,7 @@ export default function Introduction() {
               <Input 
                 id="title" 
                 name="title" 
+                placeholder="ex. Full Stack Developer"
                 value={formData.title} 
                 onChange={handleChange} 
                 required 
@@ -127,6 +129,7 @@ export default function Introduction() {
               <Input 
                 id="imageUrl" 
                 name="imageUrl" 
+                placeholder="Enter image URL"
                 value={formData.imageUrl} 
                 onChange={handleChange} 
                 type="url" 
@@ -138,6 +141,7 @@ export default function Introduction() {
               <Textarea 
                 id="about" 
                 name="about" 
+                placeholder="Tell us about yourself"
                 value={formData.about} 
                 onChange={handleChange} 
                 rows={4} 
