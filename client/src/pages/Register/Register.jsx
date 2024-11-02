@@ -43,8 +43,12 @@ export default function Register() {
               />
 
               <div className="mt-4">
-                <Button type="submit" className="w-full">
-                  Let's Go
+              <Button
+                  variant="secondary"
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-teal-400 to-green-500 text-white hover:from-teal-500 hover:to-cyan-600"
+                >
+                 Submit
                 </Button>
               </div>
             </form>
@@ -53,9 +57,9 @@ export default function Register() {
           {/* "Don't have an account?" Section */}
           <div className="px-8 py-4 bg-[#121112] bg-opacity-50 flex justify-center">
             <p className="text-sm text-gray-400">
-              Don&apos;t have an account?{" "}
-              <Link to="/register" className="text-green-400 font-semibold hover:underline">
-                Sign up
+              Already have an account?
+              <Link to="/login" className="text-green-400 font-semibold hover:underline">
+                Sign In
               </Link>
             </p>
           </div>

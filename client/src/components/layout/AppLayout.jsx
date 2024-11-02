@@ -6,7 +6,7 @@ import { Outlet,useLocation} from 'react-router-dom'
 
 function AppLayout() {
   const location = useLocation();
-  const hideLayout = location.pathname === "/user-portfolio";
+  const hideLayout = (location.pathname === "/user-portfolio" || location.pathname === "/user-dashboard" || location.pathname === "/user-dashboard/introduction")
   return (
     <>
       <div>

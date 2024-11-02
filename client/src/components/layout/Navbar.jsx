@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Portfolio2MinLogo from '../../assets/Portfolio2Min_Logo.png';
-import { AvatarDemo } from './Avatar';
+// import { AvatarDemo } from './Avatar';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -65,7 +65,7 @@ const Navbar = () => {
           >
             <Link to="/register">Register</Link>
           </Button>
-          <AvatarDemo/>
+          {/* <AvatarDemo/> */}
           {/* Mobile Menu Button */}
           <div className="flex md:hidden">
             <Button

@@ -8,6 +8,8 @@ import Features from './pages/Features/Features'
 import Feedback from './pages/Feedback/Feedback'
 import ErrorPage from './pages/Error Page/ErrorPage'
 import Portfolio from './pages/Portfolio/Portfolio'
+import Userdashboard from './pages/UserDashbaord/Userdashboard'
+import Introduction from './pages/UserDashbaord/Introduction/Introduction'
 
 
 
@@ -50,6 +52,14 @@ function App() {
     {
       path:"/user-portfolio",
       element: <Portfolio/>
+    },
+    {
+      path:"/user-dashboard/*",
+      element: <Userdashboard/>
+    },
+    {
+      path:"/intro",
+      element: <Introduction/>
     }
     
   ]
