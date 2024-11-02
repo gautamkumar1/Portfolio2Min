@@ -47,6 +47,7 @@ export default function UserProjects() {
               <Input
                 id="title"
                 name="title"
+                placeholder=" Enter your project title"
                 value={formData.title}
                 onChange={handleChange}
                 required
@@ -59,6 +60,7 @@ export default function UserProjects() {
               <Textarea
                 id="description"
                 name="description"
+                placeholder="Provide a detailed description of your project"
                 value={formData.description}
                 onChange={handleChange}
                 rows={4}
