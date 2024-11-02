@@ -16,13 +16,13 @@ import {
 import { cn } from "../../lib/utils";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./Home/Home";
-import Introduction from "./Introduction/Introduction";
 import UserEduaction from "./Education/UserEduaction";
 import UserSkills from "./Skills/UserSkills";
 import UserProjects from "./Projects/UserProjects";
 import UserExperience from "./Experience/UserExperience";
 import useAuthStore from "../../Zustand/Auth Store/useAuthStore";
 import { toast } from 'sonner'
+import UserIntroduction from "./Introduction/UserIntroduction";
 export default function UserDashboard() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -207,7 +207,7 @@ export default function UserDashboard() {
         <div className="p-4 pt-20 md:pt-4 max-w-6xl mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="introduction" element={<Introduction />} />
+            <Route path="introduction" element={<UserIntroduction />} />
             <Route path="education" element={<UserEduaction />} />
             <Route path="skills" element={<UserSkills />} />
             <Route path="experience" element={<UserExperience />} />

@@ -1,118 +1,239 @@
+const mongoose = require("mongoose");
 const introductionModel = require("../models/introductionModel");
-// Create an introduction
+
+
 exports.createIntroduction = async (req, res) => {
     try {
-        const { fullName, status, title, socialLinks, image,about } = req.body;
-        const introduction = new introductionModel({
-            fullName,
-            status,
-            title,
-            socialLinks,
-            image,
-            about
-        });
+        const { fullName, status, title, socialLinks, image, about, location } = req.body;
+        if(!fullName || !status || !title || !socialLinks || !image || !about || !location) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required'
+            });
+        }
+        // Validate user ID
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated'
+            });
+        }
 
-        if(fullName.length < 3){
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+    
+        if (!introductionModel) {
+            throw new Error('Introduction model is not defined');
+        }
+
+        // Check if an introduction already exists for the user with explicit query
+        const existingIntroduction = await introductionModel.findOne({ userId: userId }).exec();
+        
+        if (existingIntroduction) {
+            return res.status(400).json({
+                success: false,
+                message: 'Introduction already exists. Please update it instead.'
+            });
+        }
+        // Validate the fullName and title length
+        if (fullName.length < 3) {
             return res.status(400).json({
                 success: false,
                 message: 'Full name must be at least 3 characters long'
             });
         }
-        if(title.length < 3){
+
+        if (title.length < 3) {
+            return res.status(400).json({
+                success: false,
+                message: 'Title must be at least 3 characters long'
+            });
+        }
+        const introductionData = {
+            userId,
+            fullName,
+            status,
+            title,
+            socialLinks,
+            image,
+            about,
+            location
+        };
+
+        const introduction = new introductionModel(introductionData);
+
+        const savedIntroduction = await introduction.save();
+
+        return res.status(201).json({
+            success: true,
+            message: 'Introduction created successfully',
+            data: savedIntroduction
+        });
+    } catch (error) {
+        console.error('Error in createIntroduction:', error);
+        
+        // Provide more specific error messages
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation error',
+                errors: error.errors
+            });
+        }
+
+        if (error.name === 'MongoError' && error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Duplicate entry error'
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Error creating introduction',
+            error: error.message
+        });
+    }
+};
+// Get introduction by user ID
+exports.getIntroduction = async (req, res) => {
+    try {
+        // Validate user authentication
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated'
+            });
+        }
+
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+        console.log(`User ID: ${userId}`);
+        
+        
+        // Find introduction for the user
+        const introduction = await introductionModel.findOne({ userId: userId }).exec();
+        console.log(`Introduction: ${introduction}`);
+        
+        if (!introduction) {
+            return res.status(404).json({
+                success: false,
+                message: 'Introduction not found'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: introduction
+        });
+    } catch (error) {
+        console.error('Error in getIntroduction:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching introduction',
+            error: error.message
+        });
+    }
+};
+
+// Update introduction
+exports.updateIntroduction = async (req, res) => {
+    try {
+        const { fullName, status, title, socialLinks, image, about, location } = req.body;
+        
+        // Validate user authentication
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated'
+            });
+        }
+
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+
+        // Validate required fields
+        if (fullName && fullName.length < 3) {
+            return res.status(400).json({
+                success: false,
+                message: 'Full name must be at least 3 characters long'
+            });
+        }
+
+        if (title && title.length < 3) {
             return res.status(400).json({
                 success: false,
                 message: 'Title must be at least 3 characters long'
             });
         }
 
-        await introduction.save();
-        return res.status(201).json({
-            success: true,
-            data: introduction
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'Error creating introduction'
-        });
-    }
-};
+        // Find existing introduction
+        const existingIntroduction = await introductionModel.findOne({ userId }).exec();
 
-// Get all introductions
-exports.getAllIntroductions = async (req, res) => {
-    try {
-        const introductions = await introductionModel.find();
-        return res.status(200).json({
-            success: true,
-            data: introductions
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching introductions'
-        });
-    }
-};
-
-// Get introduction by ID
-exports.getIntroductionById = async (req, res) => {
-    try {
-        const introduction = await introductionModel.findById(req.params.introId);
-
-        if (!introduction) {
+        if (!existingIntroduction) {
             return res.status(404).json({
                 success: false,
-                message: 'Introduction not found'
+                message: 'Introduction not found. Please create one first.'
             });
         }
 
-        return res.status(200).json({
-            success: true,
-            data: introduction
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching introduction'
-        });
-    }
-};
+        // Prepare update data
+        const updateData = {
+            ...(fullName && { fullName }),
+            ...(status && { status }),
+            ...(title && { title }),
+            ...(socialLinks && { socialLinks }),
+            ...(image && { image }),
+            ...(about && { about }),
+            ...(location && { location }),
+            updatedAt: new Date()
+        };
 
-// Update an introduction
-exports.updateIntroduction = async (req, res) => {
-    try {
-        const { fullName, status, title, socialLinks, image,about } = req.body;
-        const introduction = await introductionModel.findByIdAndUpdate(
-            req.params.introId,
-            { fullName, status, title, socialLinks, image,about },
+        // Update the introduction
+        const updatedIntroduction = await introductionModel.findOneAndUpdate(
+            { userId },
+            { $set: updateData },
             { new: true, runValidators: true }
-        );
-
-        if (!introduction) {
-            return res.status(404).json({
-                success: false,
-                message: 'Introduction not found'
-            });
-        }
+        ).exec();
 
         return res.status(200).json({
             success: true,
-            data: introduction
+            message: 'Introduction updated successfully',
+            data: updatedIntroduction
         });
     } catch (error) {
-        res.status(400).json({
+        console.error('Error in updateIntroduction:', error);
+        
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation error',
+                errors: error.errors
+            });
+        }
+
+        res.status(500).json({
             success: false,
-            message: error.message || 'Error updating introduction'
+            message: 'Error updating introduction',
+            error: error.message
         });
     }
 };
 
-// Delete an introduction
+// Delete introduction
 exports.deleteIntroduction = async (req, res) => {
     try {
-        const introduction = await introductionModel.findByIdAndDelete(req.params.introId);
+        // Validate user authentication
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated'
+            });
+        }
 
-        if (!introduction) {
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+
+        // Find and delete the introduction
+        const deletedIntroduction = await introductionModel.findOneAndDelete({ userId }).exec();
+
+        if (!deletedIntroduction) {
             return res.status(404).json({
                 success: false,
                 message: 'Introduction not found'
@@ -124,9 +245,12 @@ exports.deleteIntroduction = async (req, res) => {
             message: 'Introduction deleted successfully'
         });
     } catch (error) {
+        console.error('Error in deleteIntroduction:', error);
         res.status(500).json({
             success: false,
-            message: 'Error deleting introduction'
+            message: 'Error deleting introduction',
+            error: error.message
         });
     }
 };
+

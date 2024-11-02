@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const introductionSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
     fullName: {
         type: String,
         required: [true, 'Full name is required'],
@@ -14,6 +15,11 @@ const introductionSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Title is required'],
         minlength: [3, 'Title must be at least 3 characters long']
+    },
+    location: {
+        type: String,
+        required: [true, 'Location is required'],
+        minlength: [3, 'Location must be at least 3 characters long']
     },
     socialLinks: {
         gmail: {

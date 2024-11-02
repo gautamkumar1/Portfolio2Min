@@ -8,21 +8,16 @@ const isAuthenticated = async (req, res, next) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: "No token provided, user not authenticated!" });
     }
-
-    // Extract the token from the Bearer string
     const token = authHeader.split(" ")[1];
-    // console.log(`token : ${token}`);
     
 
     try {
         
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // console.log(`decoded : ${decoded}`);
         
 
         
         req.user = await User.findById(decoded._id);
-        // console.log(`userId ${decoded.id} and req.user : ${req.user}`);
         
 
         

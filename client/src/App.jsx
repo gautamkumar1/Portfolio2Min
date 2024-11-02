@@ -9,8 +9,8 @@ import Feedback from './pages/Feedback/Feedback'
 import ErrorPage from './pages/Error Page/ErrorPage'
 import Portfolio from './pages/Portfolio/Portfolio'
 import Userdashboard from './pages/UserDashbaord/Userdashboard'
-import Introduction from './pages/UserDashbaord/Introduction/Introduction'
 import useAuthStore from './Zustand/Auth Store/useAuthStore'
+import Introduction from './pages/Introduction/Introduction'
 
 
 
@@ -58,6 +58,10 @@ function App() {
     {
       path:"/user-dashboard/*",
       element: isAuthenticated ? <Userdashboard /> : <Login />
+    },
+    {
+      path:"/introduction/:introId",
+      element: isAuthenticated ? <Introduction /> : <Login />
     },
     
     

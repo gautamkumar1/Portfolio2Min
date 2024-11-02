@@ -5,43 +5,86 @@ import { Input } from "../../../../components/ui/input"
 import { Label } from "../../../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select"
 import { Textarea } from "../../../../components/ui/textarea"
+import { toast } from 'sonner'
+import { useNavigate } from 'react-router-dom'
 
-export default function Introduction() {
+export default function UserIntroduction() {
+  const navigate = useNavigate();
+  const [isLoading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     status: '',
     title: '',
+    location: '',
     socialLinks: {
+      gmail: '',
+      phone: '',
+      github: '',
       linkedin: '',
       twitter: '',
-      github: '',
     },
-    imageUrl: '',
+    image: '',
     about: '',
-  })
+  });
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSocialChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      socialLinks: { ...prev.socialLinks, [name]: value }
-    }))
-  }
+      socialLinks: { ...prev.socialLinks, [name]: value },
+    }));
+  };
 
   const handleStatusChange = (value) => {
-    setFormData(prev => ({ ...prev, status: value }))
-  }
+    setFormData((prev) => ({ ...prev, status: value }));
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log(formData)
-    // Here you would typically send the data to your backend
-  }
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch("/api/user/createIntro", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(formData),
+      });
+      const introData = await response.json();
+      if (response.ok) {
+        toast.success("Saved successfully");
+        setFormData({
+          fullName: '',
+          status: '',
+          title: '',
+          socialLinks: {
+            gmail: '',
+            phone: '',
+            github: '',
+            linkedin: '',
+            twitter: '',
+          },
+          image: '',
+          about: '',
+        })
+        setLoading(false);
+      } else {
+        setLoading(false);
+        toast.error(introData.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="w-full flex items-center justify-center p-4 overflow-y-auto">
@@ -79,9 +122,9 @@ export default function Introduction() {
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700">
-                    <SelectItem value="available" className="hover:bg-gray-700 text-green-400">#openToWork</SelectItem>
-                    <SelectItem value="busy" className="hover:bg-gray-700 text-green-400" >Hire Me!</SelectItem>
-                    <SelectItem value="offline" className="hover:bg-gray-700 text-green-400">Open to Opportunity</SelectItem>
+                    <SelectItem value="Hire Me!" className="hover:bg-gray-700 text-green-400">Hire Me!</SelectItem>
+                    <SelectItem value="Open to Opportunity" className="hover:bg-gray-700 text-green-400">Open to Opportunity</SelectItem>
+                    <SelectItem value="Busy" className="hover:bg-gray-700 text-green-400">Busy</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -91,8 +134,20 @@ export default function Introduction() {
               <Input 
                 id="title" 
                 name="title" 
-                placeholder="ex. Full Stack Developer"
+                placeholder="e.g., Full Stack Developer"
                 value={formData.title} 
+                onChange={handleChange} 
+                required 
+                className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="location" className="text-gray-300">Location</Label>
+              <Input 
+                id="location" 
+                name="location" 
+                placeholder="e.g., Noida,Up,India"
+                value={formData.location} 
                 onChange={handleChange} 
                 required 
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
@@ -101,6 +156,27 @@ export default function Introduction() {
             <div className="space-y-2">
               <Label className="text-gray-300">Social Links</Label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Input 
+                  placeholder="Gmail" 
+                  name="gmail" 
+                  value={formData.socialLinks.gmail} 
+                  onChange={handleSocialChange} 
+                  className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <Input 
+                  placeholder="Phone" 
+                  name="phone" 
+                  value={formData.socialLinks.phone} 
+                  onChange={handleSocialChange} 
+                  className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <Input 
+                  placeholder="GitHub" 
+                  name="github" 
+                  value={formData.socialLinks.github} 
+                  onChange={handleSocialChange} 
+                  className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                />
                 <Input 
                   placeholder="LinkedIn" 
                   name="linkedin" 
@@ -115,22 +191,15 @@ export default function Introduction() {
                   onChange={handleSocialChange} 
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <Input 
-                  placeholder="GitHub" 
-                  name="github" 
-                  value={formData.socialLinks.github} 
-                  onChange={handleSocialChange} 
-                  className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
-                />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="imageUrl" className="text-gray-300">Image URL</Label>
+              <Label htmlFor="image" className="text-gray-300">Image URL</Label>
               <Input 
-                id="imageUrl" 
-                name="imageUrl" 
+                id="image" 
+                name="image" 
                 placeholder="Enter image URL"
-                value={formData.imageUrl} 
+                value={formData.image} 
                 onChange={handleChange} 
                 type="url" 
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
@@ -156,10 +225,10 @@ export default function Introduction() {
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
             onClick={handleSubmit}
           >
-            Submit
+            {isLoading ? 'Loading...' : 'Save'}
           </Button>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
