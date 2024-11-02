@@ -7,6 +7,7 @@ import { useState } from "react";
 import useAuthStore from "../../Zustand/Auth Store/useAuthStore"
 import { useNavigate } from "react-router-dom"
 import { jwtDecode } from "jwt-decode";
+import { toast } from 'sonner'
 export default function Login() {
   const { login } = useAuthStore();
   const navigate = useNavigate();
@@ -37,18 +38,21 @@ export default function Login() {
       const userData = await response.json();
       if (response.ok) {
         login(userData);
-        alert("Login successful");
+        toast.success("Login successful");
         const decodedToken = jwtDecode(userData.token);
         localStorage.setItem("userData", JSON.stringify(decodedToken));
         setUser({email: "", password: ""});
         navigate("/user-dashboard");
         setLoading(false);
       } else {
-        alert(userData.message);
+        setLoading(false);
+        toast.error(userData.message);
         
       }
     } catch (error) {
+      setLoading(false);
       console.error(error);
+      toast.error(error.message);
     }
   }
 

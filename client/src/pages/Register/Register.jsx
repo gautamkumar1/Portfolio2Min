@@ -5,8 +5,10 @@ import { Button } from "../../components/ui/button";
 import Input from "../../components/ui/Input";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
-
+import { toast } from 'sonner'
+import { useNavigate } from "react-router-dom"
 export default function Register() {
+  const navigate = useNavigate();
   const [user,setUser] = useState({
     username:'',
     email:'',
@@ -34,17 +36,19 @@ export default function Register() {
       });
       const responseData = await response.json();
       if (response.ok) {
-        alert("Registration successful");
-        const decodedToken = jwtDecode(responseData.token);
-        localStorage.setItem("userData", JSON.stringify(decodedToken));
+        toast.success("Registration successful");
+        navigate("/login");
         setUser({ username: "", email: "", password: ""});
         setLoading(false);
       } else {
-        alert(responseData.message);
+        setLoading(false);
+        toast.error(responseData.message);
         
       }
     } catch (error) {
+      setLoading(false);
       console.error(error);
+      toast.error(error.message);
     }
   }
 

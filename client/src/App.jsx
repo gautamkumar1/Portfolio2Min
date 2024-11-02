@@ -53,7 +53,7 @@ function App() {
     ,
     {
       path:"/user-portfolio",
-      element: <Portfolio/>
+      element: isAuthenticated ? <Portfolio /> : <Login />
     },
     {
       path:"/user-dashboard/*",

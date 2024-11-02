@@ -22,7 +22,7 @@ import UserSkills from "./Skills/UserSkills";
 import UserProjects from "./Projects/UserProjects";
 import UserExperience from "./Experience/UserExperience";
 import useAuthStore from "../../Zustand/Auth Store/useAuthStore";
-
+import { toast } from 'sonner'
 export default function UserDashboard() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -48,7 +48,7 @@ export default function UserDashboard() {
 
   const handleLogout = () => {
     logout();
-    alert("Logged out successfully!");
+    toast.success("Logged out successfully!");
     navigate("/");
   };
 
