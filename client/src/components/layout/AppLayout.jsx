@@ -6,7 +6,9 @@ import { Outlet,useLocation} from 'react-router-dom'
 
 function AppLayout() {
   const location = useLocation();
-  const hideLayout = (location.pathname === "/user-portfolio" || location.pathname === "/user-dashboard" || location.pathname === "/user-dashboard/introduction")
+  const hideLayout = (location.pathname === "/user-portfolio" || location.pathname === "/user-dashboard" || location.pathname === "/user-dashboard/introduction"
+    || location.pathname === "/user-dashboard/education" || location.pathname === "/user-dashboard/skills" || location.pathname === "/user-dashboard/experience" || location.pathname === "/user-dashboard/projects")
+  
   return (
     <>
       <div>

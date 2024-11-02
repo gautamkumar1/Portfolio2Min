@@ -23,6 +23,7 @@ import { cn } from "../../lib/utils";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./Home/Home";
 import Introduction from "./Introduction/Introduction";
+import UserEduaction from "./Education/UserEduaction";
 
 export default function UserDashboard() {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -32,7 +33,7 @@ export default function UserDashboard() {
   const navigation = [
     { name: 'Home', icon: LayoutDashboard, to: '/' },
     { name: 'Introduction', icon: User, to: '/user-dashboard/introduction' },
-    { name: 'Education', icon: GraduationCap, to: '#' },
+    { name: 'Education', icon: GraduationCap, to: '/user-dashboard/education' },
     { name: 'Skills', icon: Lightbulb, to: '#' },
     { name: 'Experiences', icon: Briefcase, to: '#' },
     { name: 'Projects', icon: FolderKanban, to: '#' },
@@ -205,6 +206,7 @@ export default function UserDashboard() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="introduction" element={<Introduction />} />
+            <Route path="education" element={<UserEduaction />} />
           </Routes>
         </div>
       </main>
