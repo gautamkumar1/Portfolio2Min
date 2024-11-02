@@ -24,6 +24,7 @@ import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./Home/Home";
 import Introduction from "./Introduction/Introduction";
 import UserEduaction from "./Education/UserEduaction";
+import UserSkills from "./Skills/UserSkills";
 
 export default function UserDashboard() {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -34,9 +35,9 @@ export default function UserDashboard() {
     { name: 'Home', icon: LayoutDashboard, to: '/' },
     { name: 'Introduction', icon: User, to: '/user-dashboard/introduction' },
     { name: 'Education', icon: GraduationCap, to: '/user-dashboard/education' },
-    { name: 'Skills', icon: Lightbulb, to: '#' },
-    { name: 'Experiences', icon: Briefcase, to: '#' },
-    { name: 'Projects', icon: FolderKanban, to: '#' },
+    { name: 'Skills', icon: Lightbulb, to: '/user-dashboard/skills' },
+    { name: 'Experiences', icon: Briefcase, to: '/user-dashboard/experience' },
+    { name: 'Projects', icon: FolderKanban, to: '/user-dashboard/projects' },
   ];
 
   const toggleSidebar = () => setIsCollapsed((prev) => !prev);
@@ -207,6 +208,7 @@ export default function UserDashboard() {
             <Route path="/" element={<Home />} />
             <Route path="introduction" element={<Introduction />} />
             <Route path="education" element={<UserEduaction />} />
+            <Route path="skills" element={<UserSkills />} />
           </Routes>
         </div>
       </main>
