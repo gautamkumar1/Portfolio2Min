@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Github, Mail, Phone, Linkedin, Twitter } from "lucide-react";
 import userDp from "../../assets/dummydp.jpg";
-import useIntroductionStore from "../../Zustand/Intro Store/useIntroductionStore";
 import { useParams } from "react-router-dom";
+import { useIntroductionStore } from "../../Zustand/Intro Store/useIntroductionStore";
 
 export default function Introduction() {
   const { username } = useParams();
@@ -38,17 +38,6 @@ export default function Introduction() {
 
   return (
     <div>
-      {/* Display message based on source */}
-      {source === "portfolio" && (
-        <p className="text-green-500">Data fetched from Portfolio API.</p>
-      )}
-      {source === "intro" && (
-        <p className="text-blue-500">Data fetched from Intro API.</p>
-      )}
-      {source === "fallback" && (
-        <p className="text-red-500">Displaying fallback data.</p>
-      )}
-
       <div className="flex flex-col-reverse sm:flex-row justify-between items-center sm:items-start gap-6 sm:gap-4">
         {/* Left Content */}
         <div className="space-y-4 text-center sm:text-left w-full sm:w-auto">

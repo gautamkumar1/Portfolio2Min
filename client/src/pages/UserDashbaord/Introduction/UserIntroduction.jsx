@@ -1,132 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { Input } from "../../../../components/ui/input";
 import { Label } from "../../../../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select";
 import { Textarea } from "../../../../components/ui/textarea";
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useUserIntroStoreForPost } from '../../../Zustand/Intro Store/useIntroductionStore';
+
 
 export default function UserIntroduction() {
-  const navigate = useNavigate();
-  const [isLoading, setLoading] = useState(false);
-  const [introId, setIntroId] = useState(null);
-  const [isUpdate, setIsUpdate] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    status: '',
-    title: '',
-    location: '',
-    socialLinks: {
-      gmail: '',
-      phone: '',
-      github: '',
-      linkedin: '',
-      twitter: '',
-    },
-    image: '',
-    about: '',
-  });
+const { formData, isLoading, isCreate, handleCreate, handleDelete, handleUpdate } = useUserIntroStoreForPost();
+const [introData, setIntroData] = useState({
+  ...formData,
+  socialLinks: formData.socialLinks || {}, // Default to an empty object if undefined
+});
 
-  useEffect(() => {
-    // Fetch existing data if it exists (for update)
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/user/getIntro", {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (response.ok) {
-          const responseData = await response.json();
-          const data = responseData.data;
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setIntroData((prev) => ({ ...prev, [name]: value }));
+};
 
-          setIntroId(data._id);
-          
-          // Set all form fields, including nested socialLinks
-          setFormData({
-            fullName: data.fullName || '',
-            status: data.status || '',
-            title: data.title || '',
-            location: data.location || '',
-            socialLinks: {
-              gmail: data.socialLinks.gmail || '',
-              phone: data.socialLinks.phone || '',
-              github: data.socialLinks.github || '',
-              linkedin: data.socialLinks.linkedin || '',
-              twitter: data.socialLinks.twitter || '',
-            },
-            image: data.image || '',
-            about: data.about || '',
-          });
-          setIsUpdate(true);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, []);
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+const handleSocialChange = (e) => {
+  const { name, value } = e.target;
+  setIntroData((prev) => ({
+    ...prev,
+    socialLinks: { ...prev.socialLinks, [name]: value },
+  }));
+};
 
-  const handleSocialChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      socialLinks: { ...prev.socialLinks, [name]: value },
-    }));
-  };
 
-  const handleStatusChange = (value) => {
-    setFormData((prev) => ({ ...prev, status: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    console.log(`Form data: ${JSON.stringify(formData)}`);
-    
-    try {
-      const response = await fetch(isUpdate ? `/api/user/${introId}` : "/api/user/createIntro", {
-        method: isUpdate ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      const responseData = await response.json();
-      
-      if (response.ok) {
-        toast.success(isUpdate ? "Updated successfully" : "Saved successfully");
-        window.location.reload();
-      } else {
-        console.error("Error:", responseData);
-        
-        // Displaying the main error message
-        toast.error(responseData.message || "Error saving data");
-
-        // Loop through each error in `errors` object to show detailed messages
-        if (responseData.errors) {
-          Object.values(responseData.errors).forEach(error => {
-            toast.error(error.message);  // Display each validation error message
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Error creating introduction");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+const handleStatusChange = (value) => {
+  setIntroData((prev) => ({ ...prev, status: value }));
+};
 
   return (
     <div className="w-full flex items-center justify-center p-4 overflow-y-auto">
@@ -134,16 +39,16 @@ export default function UserIntroduction() {
         <CardHeader>
           <div className="text-center mb-6">
             <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 animate-gradient-x">
-              {isUpdate ? "Update Your Profile" : "Craft Your Professional Profile"}
+              Craft Your Professional Profile
             </h1>
             <p className="text-gray-400 mt-2 text-sm">
               Share your story, showcase your potential
             </p>
           </div>
-          <CardTitle className="text-2xl text-gray-100">{isUpdate ? "Edit Introduction" : "Introduction Section"}</CardTitle>
+          <CardTitle className="text-2xl text-gray-100">Introduction Section</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="fullName" className="text-gray-300">Full Name</Label>
@@ -151,7 +56,7 @@ export default function UserIntroduction() {
                   id="fullName" 
                   name="fullName" 
                   placeholder="Enter your full name"
-                  value={formData.fullName} 
+                  value={introData?.fullName || ''} 
                   onChange={handleChange} 
                   required 
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
@@ -159,14 +64,14 @@ export default function UserIntroduction() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="status" className="text-gray-300">Status</Label>
-                <Select onValueChange={handleStatusChange} value={formData.status}>
+                <Select onValueChange={handleStatusChange} value={introData?.status || ''}>
                   <SelectTrigger className="bg-gray-700 border-gray-600 text-gray-100">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700">
                     <SelectItem value="Hire Me!" className="hover:bg-gray-700 text-green-400">Hire Me!</SelectItem>
                     <SelectItem value="Open to Opportunity" className="hover:bg-gray-700 text-green-400">Open to Opportunity</SelectItem>
-                    <SelectItem value="Busy" className="hover:bg-gray-700 text-green-400">Busy</SelectItem>
+                    <SelectItem value="#openToWork" className="hover:bg-gray-700 text-green-400">#OpenToWork</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -177,7 +82,7 @@ export default function UserIntroduction() {
                 id="title" 
                 name="title" 
                 placeholder="e.g., Full Stack Developer"
-                value={formData.title} 
+                value={introData?.title || ''} 
                 onChange={handleChange} 
                 required 
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
@@ -189,7 +94,7 @@ export default function UserIntroduction() {
                 id="location" 
                 name="location" 
                 placeholder="e.g., Noida,Up,India"
-                value={formData.location} 
+                value={introData?.location || ''} 
                 onChange={handleChange} 
                 required 
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
@@ -201,35 +106,35 @@ export default function UserIntroduction() {
                 <Input 
                   placeholder="Gmail" 
                   name="gmail" 
-                  value={formData.socialLinks?.gmail || ''} 
+                  value={introData?.socialLinks.gmail || ''} 
                   onChange={handleSocialChange} 
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <Input 
                   placeholder="Phone" 
                   name="phone" 
-                  value={formData.socialLinks?.phone || ''}  
+                  value={introData?.socialLinks.phone || ''} 
                   onChange={handleSocialChange} 
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <Input 
                   placeholder="GitHub" 
                   name="github" 
-                  value={formData.socialLinks?.github || ''} 
+                  value={introData?.socialLinks.github || ''} 
                   onChange={handleSocialChange} 
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <Input 
                   placeholder="LinkedIn" 
                   name="linkedin" 
-                  value={formData.socialLinks?.linkedin  || ''} 
+                  value={introData?.socialLinks.linkedin || ''} 
                   onChange={handleSocialChange} 
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <Input 
                   placeholder="Twitter" 
                   name="twitter" 
-                  value={formData.socialLinks?.twitter || ''} 
+                  value={introData?.socialLinks.twitter || ''} 
                   onChange={handleSocialChange} 
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -240,8 +145,8 @@ export default function UserIntroduction() {
               <Input 
                 id="image" 
                 name="image" 
-                placeholder="Enter github profile image url - https://avatars.githubusercontent.com/<username>"
-                value={formData.image} 
+                placeholder="Enter image URL"
+                value={introData?.image || ''} 
                 onChange={handleChange} 
                 type="url" 
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
@@ -253,7 +158,7 @@ export default function UserIntroduction() {
                 id="about" 
                 name="about" 
                 placeholder="Tell us about yourself"
-                value={formData.about} 
+                value={introData?.about || ''} 
                 onChange={handleChange} 
                 rows={4} 
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
@@ -261,14 +166,27 @@ export default function UserIntroduction() {
             </div>
           </form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-center space-x-4 mt-4">
           <Button 
-            type="submit" 
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
-            onClick={handleSubmit}
-            disabled={!formData.fullName} // Button disabled if no data entered
+            className="bg-blue-600 hover:bg-blue-700 text-white" 
+            disabled={isCreate} 
+            onClick={()=>handleCreate(introData)}
           >
-            {isLoading ? 'Loading...' : isUpdate ? 'Update' : 'Save'}
+            {isLoading ? 'Creating...' : 'Create'}
+          </Button>
+          <Button 
+            className="bg-green-600 hover:bg-green-700 text-white" 
+            disabled={!isCreate} 
+            onClick={()=>handleUpdate(introData)}
+          >
+            {isLoading ? 'Updating...' : 'Update'}
+          </Button>
+          <Button 
+            className="bg-red-600 hover:bg-red-700 text-white" 
+            disabled={!isCreate} 
+            onClick={handleDelete}
+          >
+            {isLoading ? 'Deleting...' : 'Delete'}
           </Button>
         </CardFooter>
       </Card>

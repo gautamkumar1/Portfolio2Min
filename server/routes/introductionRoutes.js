@@ -6,7 +6,7 @@ const router = express.Router();
 router.post('/user/createIntro', isAuthenticated,createIntroduction);
 router.get('/user/getIntro', isAuthenticated,getIntroduction);
 router.get('/user/getIntroForPortfolio/:username', getIntroductionForPortfolio);
-router.put('/user/:introId', isAuthenticated,updateIntroduction);
+router.put('/user/updateIntro', isAuthenticated,updateIntroduction);
 router.delete('/user/deleteIntro', isAuthenticated,deleteIntroduction);
 
 module.exports = router;

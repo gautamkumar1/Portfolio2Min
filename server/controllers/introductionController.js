@@ -220,7 +220,16 @@ exports.updateIntroduction = async (req, res) => {
                 message: 'User not authenticated'
             });
         }
+        const username = req.user.username;
+        // console.log(`Username: ${username}`);
+        
 
+        if (!username) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username parameter is missing'
+            });
+        }
         const userId = new mongoose.Types.ObjectId(req.user.id);
 
         // Validate required fields
@@ -253,20 +262,21 @@ exports.updateIntroduction = async (req, res) => {
             ...(fullName && { fullName }),
             ...(status && { status }),
             ...(title && { title }),
-            ...(socialLinks && { socialLinks }),
+            ...(socialLinks && Object.keys(socialLinks).length > 0 && { socialLinks }),  // Only include socialLinks if it has valid properties
             ...(image && { image }),
             ...(about && { about }),
             ...(location && { location }),
             updatedAt: new Date()
-        };
+          };
 
         // Update the introduction
         const updatedIntroduction = await introductionModel.findOneAndUpdate(
             { userId },
             { $set: updateData },
-            { new: true, runValidators: true }
+            { new: true, runValidators: false }
         ).exec();
         cache.del(`intro_${userId}`);
+        cache.del(`intro_${username}`);
         return res.status(200).json({
             success: true,
             message: 'Introduction updated successfully',
@@ -304,7 +314,7 @@ exports.deleteIntroduction = async (req, res) => {
 
         const userId = req.user.id;
         const cacheKey = `intro_${userId}`;
-
+        const username = req.user.username;
         // Find and delete the introduction
         const deletedIntroduction = await introductionModel.findOneAndDelete({ userId: new mongoose.Types.ObjectId(userId) });
 
@@ -317,6 +327,7 @@ exports.deleteIntroduction = async (req, res) => {
 
         // Remove the introduction from the cache if it exists
         cache.del(cacheKey);
+        cache.del(`intro_${username}`);
 
         return res.status(200).json({
             success: true,

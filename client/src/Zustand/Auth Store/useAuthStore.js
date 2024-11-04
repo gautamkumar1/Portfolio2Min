@@ -13,6 +13,10 @@ const useAuthStore = create(
         set({ isAuthenticated: false, user: null });
         localStorage.removeItem('auth-storage'); 
         localStorage.removeItem('userData'); 
+        localStorage.removeItem('token');
+        localStorage.removeItem('formData');
+        localStorage.removeItem('isCreate');
+        localStorage.removeItem('user-intro-storage');
       }
     }),
     {
