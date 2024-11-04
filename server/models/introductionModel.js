@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const introductionSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
+    username: { 
+        type: String, 
+        required: true,
+        ref: 'User'  
+    },
     fullName: {
         type: String,
         required: [true, 'Full name is required'],

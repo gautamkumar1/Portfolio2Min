@@ -15,7 +15,7 @@ import Introduction from './pages/Introduction/Introduction'
 
 
 function App() {
-
+  const Userdata = JSON.parse(localStorage.getItem("userData"));
   const {isAuthenticated} = useAuthStore()
   const router = createBrowserRouter([
     {
@@ -52,7 +52,11 @@ function App() {
     }
     ,
     {
-      path:"/user-portfolio",
+      path: "/personal-portfolio/:username",
+      element: <Portfolio />
+    },
+    {
+      path: "/preview-portfolio",
       element: isAuthenticated ? <Portfolio /> : <Login />
     },
     {

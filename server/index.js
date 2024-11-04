@@ -8,8 +8,10 @@ const experienceRoute = require("./routes/experienceRoutes")
 const projectsRoute = require("./routes/projectsRoutes")
 const connectDb = require('./utils/dbConnect');
 const app = express();
+const morgan = require('morgan');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });

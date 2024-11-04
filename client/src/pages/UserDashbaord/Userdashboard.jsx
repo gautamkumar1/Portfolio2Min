@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import {
   LayoutDashboard,
+  Eye,
   User,
   GraduationCap,
   Lightbulb,
@@ -28,14 +29,15 @@ export default function UserDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuthStore();
-  
+
   const navigation = [
-    { name: 'Home', icon: LayoutDashboard, to: '/' },
+    { name: 'Home', icon: LayoutDashboard, to: '/', newTab: true },
     { name: 'Introduction', icon: User, to: '/user-dashboard/introduction' },
     { name: 'Education', icon: GraduationCap, to: '/user-dashboard/education' },
     { name: 'Skills', icon: Lightbulb, to: '/user-dashboard/skills' },
     { name: 'Experiences', icon: Briefcase, to: '/user-dashboard/experience' },
     { name: 'Projects', icon: FolderKanban, to: '/user-dashboard/projects' },
+    { name: 'Preview Portfolio', icon: Eye, to: '/preview-portfolio', newTab: true },
   ];
 
   const toggleSidebar = () => setIsCollapsed((prev) => !prev);
@@ -67,8 +69,8 @@ export default function UserDashboard() {
               {!isCollapsed && (
                 <h2 className="text-lg font-semibold truncate">User Dashboard</h2>
               )}
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
                 onClick={toggleSidebar}
                 className="hover:bg-gray-700"
@@ -93,7 +95,13 @@ export default function UserDashboard() {
                   )}
                   asChild
                 >
-                  <Link to={item.to} className="flex items-center gap-2">
+
+                  <Link
+                    to={item.to}
+                    className="flex items-center gap-2"
+                    target={item.newTab ? "_blank" : "_self"}
+
+                  >
                     <item.icon className="h-5 w-5 flex-shrink-0" />
                     {!isCollapsed && (
                       <span className="truncate">{item.name}</span>
@@ -104,6 +112,7 @@ export default function UserDashboard() {
                       </span>
                     )}
                   </Link>
+
                 </Button>
               </div>
             ))}
@@ -132,18 +141,18 @@ export default function UserDashboard() {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black/50 z-50"
           onClick={toggleMobileMenu}
         >
-          <div 
+          <div
             className="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h2 className="text-lg font-semibold">User Dashboard</h2>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
                 onClick={toggleMobileMenu}
                 className="hover:bg-gray-700"
@@ -183,8 +192,8 @@ export default function UserDashboard() {
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 border-b border-gray-700 z-40">
         <div className="flex items-center justify-between px-4 h-full">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             onClick={toggleMobileMenu}
             className="hover:bg-gray-700"

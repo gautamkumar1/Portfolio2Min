@@ -1,25 +1,29 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Github, Mail, Phone, Linkedin, Twitter } from "lucide-react";
-import { Badge } from "../../../components/ui/badge";
 import userDp from "../../assets/dummydp.jpg";
 import useIntroductionStore from "../../Zustand/Intro Store/useIntroductionStore";
+import { useParams } from "react-router-dom";
 
 export default function Introduction() {
-  const { data, loading, fetchIntroData } = useIntroductionStore();
+  const { username } = useParams();
+  console.log(`username : ${username}`);
+  
+  const { data, loading, source, fetchIntroData } = useIntroductionStore();
   console.log(`data : ${JSON.stringify(data)}`);
+  console.log(`source : ${source}`);
 
   useEffect(() => {
-    // Fetch the introduction data without an introId
-    fetchIntroData(); // Call the function to fetch the introduction data
-  }, [fetchIntroData]);
+    // Fetch the introduction data without a username parameter by default
+    fetchIntroData(username,); // Call the function to fetch the introduction data
+  }, [fetchIntroData],username);
 
   if (loading) return <p>Loading...</p>;
 
+  // Display data based on the source
   const displayData = data || {
     fullName: "Gautam Kumar",
     status: "#OpenToWork",
-    title: "Hire Me!",
-    roleDescription: "Full Stack Developer focused on learning through experimentation and product development.",
+    title: "Full Stack Developer focused on learning through experimentation and product development.",
     location: "Noida, UP, India",
     image: userDp,
     socialLinks: {
@@ -34,6 +38,17 @@ export default function Introduction() {
 
   return (
     <div>
+      {/* Display message based on source */}
+      {source === "portfolio" && (
+        <p className="text-green-500">Data fetched from Portfolio API.</p>
+      )}
+      {source === "intro" && (
+        <p className="text-blue-500">Data fetched from Intro API.</p>
+      )}
+      {source === "fallback" && (
+        <p className="text-red-500">Displaying fallback data.</p>
+      )}
+
       <div className="flex flex-col-reverse sm:flex-row justify-between items-center sm:items-start gap-6 sm:gap-4">
         {/* Left Content */}
         <div className="space-y-4 text-center sm:text-left w-full sm:w-auto">
@@ -47,13 +62,13 @@ export default function Introduction() {
               {displayData.status}
             </span>
             <span className="bg-white text-black px-4 py-1 rounded-full font-medium shadow-sm">
-              {displayData.title}
+              Tech Enthusiast 📱
             </span>
           </div>
 
           {/* Role Description */}
           <p className="text-gray-400 text-base sm:text-lg font-medium">
-            {displayData.roleDescription || "Role description not available."}
+            {displayData.title || "Role description not available."}
           </p>
 
           {/* Location */}
