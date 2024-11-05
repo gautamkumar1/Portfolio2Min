@@ -92,7 +92,7 @@ exports.createIntroduction = async (req, res) => {
     }
 };
 
-// Get introduction by user ID
+// Get introduction
 exports.getIntroduction = async (req, res) => {
     try {
         // Validate user authentication

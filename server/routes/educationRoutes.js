@@ -1,12 +1,12 @@
 const express = require('express');
-const { addEducation, getAllEducations, getEducationById, updateEducation, deleteEducation } = require('../controllers/educationControllers');
 const { isAuthenticated } = require('../middlewares/auth-Middleware');
+const { addEducation, getEducation, updateEducation, deleteEducation, getEducationForPortfolio } = require('../controllers/educationControllers');
 const router = express.Router();
 
 router.post('/user/createEdu', isAuthenticated,addEducation);
-router.get('/user/getEdu', isAuthenticated,getAllEducations);
-router.get('/user/edubyId/:eduId', isAuthenticated,getEducationById);
-router.put('/user/edubyId/:eduId', isAuthenticated,updateEducation);
-router.delete('/user/edubyId/:eduId', isAuthenticated,deleteEducation);
+router.get('/user/getEdu', isAuthenticated,getEducation);
+router.get('/user/getEduForPortfolio/:username', getEducationForPortfolio);
+router.put('/user/updateEdu', isAuthenticated,updateEducation);
+router.delete('/user/deleteEdu', isAuthenticated,deleteEducation);
 
 module.exports = router;
