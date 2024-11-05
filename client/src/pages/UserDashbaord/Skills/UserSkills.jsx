@@ -1,50 +1,41 @@
-import { useState } from 'react'
-import { Button } from "../../../components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card"
-import { Input } from "../../../../components/ui/input"
-import { Label } from "../../../../components/ui/label"
+import { useState } from 'react';
+import { Button } from "../../../components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
+import { useSkillStoreforPost } from '../../../Zustand/Skill Store/useSkillStore';
 
 export default function UserSkills() {
+  const {isCreate, isLoading, handleCreate, handleDelete,handleUpdate} = useSkillStoreforPost()
   const [formData, setFormData] = useState({
     Languages: [],
     Tools: [],
     Databases: [],
     FrameworksAndLibraries: [],
-    skillCategory: '',
-    skill: ''
-  })
+  });
+  const [skillCategory, setSkillCategory] = useState('');
+  const [skill, setSkill] = useState('');
 
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      skill: e.target.value
-    }))
-  }
+  const handleCategoryChange = (e) => {
+    setSkillCategory(e.target.value);
+    setSkill(''); // Reset skill input when category changes
+  };
 
-  const handleSelectChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      skillCategory: e.target.value,
-      skill: ''
-    }))
-  }
+  const handleSkillChange = (e) => {
+    setSkill(e.target.value);
+  };
 
   const addSkill = () => {
-    const { skillCategory, skill } = formData
     if (skill && skillCategory) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         [skillCategory]: [...prev[skillCategory], skill],
-        skill: ''
-      }))
+      }));
+      setSkill(''); // Clear skill input after adding
     }
-  }
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log(formData)
-    // Send data to backend
-  }
+ 
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
@@ -61,7 +52,7 @@ export default function UserSkills() {
           <CardTitle className="text-2xl text-gray-100">Skills Section</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form className="space-y-6">
             <div className="space-y-4">
               {/* Dropdown for Skill Category */}
               <div className="space-y-2">
@@ -69,8 +60,8 @@ export default function UserSkills() {
                 <select 
                   id="skillCategory" 
                   name="skillCategory" 
-                  value={formData.skillCategory} 
-                  onChange={handleSelectChange} 
+                  value={skillCategory} 
+                  onChange={handleCategoryChange}
                   required 
                   className="w-full bg-gray-700 border-gray-600 text-gray-100 p-2 rounded focus:ring-blue-500 focus:border-blue-500"
                 >
@@ -83,16 +74,16 @@ export default function UserSkills() {
               </div>
               
               {/* Skills Input */}
-              {formData.skillCategory && (
+              {skillCategory && (
                 <div className="space-y-2">
                   <Label htmlFor="skill" className="text-gray-300">Add a Skill</Label>
                   <div className="flex gap-2">
                     <Input 
                       id="skill" 
                       name="skill" 
-                      placeholder={`Enter your ${formData.skillCategory} skill`} 
-                      value={formData.skill} 
-                      onChange={handleChange} 
+                      placeholder={`Enter your ${skillCategory} skill`} 
+                      value={skill} 
+                      onChange={handleSkillChange} 
                       required
                       className="flex-grow bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                     />
@@ -125,16 +116,30 @@ export default function UserSkills() {
             </div>
           </form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-center space-x-4 mt-4">
           <Button 
-            type="submit" 
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
-            onClick={handleSubmit}
+            className="bg-blue-600 hover:bg-blue-700 text-white" 
+            disabled={isCreate} 
+            onClick={()=>handleCreate(formData)}
           >
-            Submit
+            {isLoading ? 'Creating...' : 'Create'}
+          </Button>
+          <Button 
+            className="bg-green-600 hover:bg-green-700 text-white" 
+            disabled={!isCreate} 
+            onClick={()=>handleUpdate(formData)}
+          >
+            {isLoading ? 'Updating...' : 'Update'}
+          </Button>
+          <Button 
+            className="bg-red-600 hover:bg-red-700 text-white" 
+            disabled={!isCreate} 
+            onClick={handleDelete}
+          >
+            {isLoading ? 'Deleting...' : 'Delete'}
           </Button>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

@@ -18,6 +18,7 @@ const useAuthStore = create(
         localStorage.removeItem('isCreate');
         localStorage.removeItem('user-intro-storage');
         localStorage.removeItem('education-storage');
+        localStorage.removeItem('skills-storage');
       }
     }),
     {
