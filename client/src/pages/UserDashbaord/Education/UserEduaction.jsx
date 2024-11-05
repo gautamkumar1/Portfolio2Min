@@ -3,8 +3,10 @@ import { Button } from "../../../components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card"
 import { Input } from "../../../../components/ui/input"
 import { Label } from "../../../../components/ui/label"
-
+import { useEducationStoreforPost } from '../../../Zustand/Education Store/useEducationStore'
 export default function UserEducation() {
+
+  const { isCreate, isLoading, handleCreate, handleDelete,handleUpdate} = useEducationStoreforPost()
   const [formData, setFormData] = useState({
     collegeName: '',
     branchName: '',
@@ -16,12 +18,7 @@ export default function UserEducation() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log(formData)
-    // Here you would typically send the data to your backend
-  }
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
       <Card className="w-full max-w-2xl mx-auto bg-gray-800 border-gray-700 text-gray-100">
@@ -37,7 +34,7 @@ export default function UserEducation() {
           <CardTitle className="text-2xl text-gray-100">Education Section</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="collegeName" className="text-gray-300">College Name</Label>
@@ -78,13 +75,27 @@ export default function UserEducation() {
             </div>
           </form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-center space-x-4 mt-4">
           <Button 
-            type="submit" 
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
-            onClick={handleSubmit}
+            className="bg-blue-600 hover:bg-blue-700 text-white" 
+            disabled={isCreate} 
+            onClick={()=>handleCreate(formData)}
           >
-            Submit
+            {isLoading ? 'Creating...' : 'Create'}
+          </Button>
+          <Button 
+            className="bg-green-600 hover:bg-green-700 text-white" 
+            disabled={!isCreate} 
+            onClick={()=>handleUpdate(formData)}
+          >
+            {isLoading ? 'Updating...' : 'Update'}
+          </Button>
+          <Button 
+            className="bg-red-600 hover:bg-red-700 text-white" 
+            disabled={!isCreate} 
+            onClick={handleDelete}
+          >
+            {isLoading ? 'Deleting...' : 'Delete'}
           </Button>
         </CardFooter>
       </Card>

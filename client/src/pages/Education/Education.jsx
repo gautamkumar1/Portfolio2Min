@@ -1,6 +1,18 @@
-import React from 'react';
-
+import React, { useEffect } from 'react';
+import { useEducationStore } from '../../Zustand/Education Store/useEducationStore';
+import { useParams } from 'react-router-dom';
 function Education() {
+  const { username } = useParams();
+  const { data, loading, source, fetchEduData } = useEducationStore();
+  console.log(`data : ${JSON.stringify(data)}`);
+  console.log(`source : ${source}`);
+  useEffect(() => {
+    
+    fetchEduData(username,); 
+  }, [fetchEduData],username);
+
+  if (loading) return <p>Loading...</p>;
+ 
   return (
     <div>
       <div className="text-white p-4 sm:p-6 md:p-8">
@@ -14,16 +26,16 @@ function Education() {
               {/* College Info */}
               <div className="space-y-2">
                 <h3 className="text-lg sm:text-xl font-semibold text-center sm:text-left text-white">
-                  Priyadarshini College of Engineering
+                  {data?.collegeName}
                 </h3>
                 <p className="text-gray-400 text-sm sm:text-base text-center sm:text-left">
-                  Bachelor of Technology in Computer Technology
+                  {data?.branchName}
                 </p>
               </div>
 
               {/* Year */}
               <div className="flex-shrink-0 text-gray-400 text-sm sm:text-base font-medium text-center sm:text-right order-first sm:order-last w-full sm:w-auto">
-                2020 - 2024
+                {data?.passoutYear}
               </div>
             </div>
           </div>
