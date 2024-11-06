@@ -15,10 +15,10 @@ const useAuthStore = create(
         localStorage.removeItem('userData'); 
         localStorage.removeItem('token');
         localStorage.removeItem('formData');
-        localStorage.removeItem('isCreate');
-        localStorage.removeItem('user-intro-storage');
-        localStorage.removeItem('education-storage');
-        localStorage.removeItem('skills-storage');
+        // localStorage.removeItem('isCreate');
+        // localStorage.removeItem('user-intro-storage');
+        // localStorage.removeItem('education-storage');
+        // localStorage.removeItem('skills-storage');
       }
     }),
     {

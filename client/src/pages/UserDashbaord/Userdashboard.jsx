@@ -31,13 +31,13 @@ export default function UserDashboard() {
   const { logout } = useAuthStore();
 
   const navigation = [
+    { name: 'Preview Portfolio', icon: Eye, to: '/preview-portfolio', newTab: true },
     { name: 'Home', icon: LayoutDashboard, to: '/', newTab: true },
     { name: 'Introduction', icon: User, to: '/user-dashboard/introduction' },
     { name: 'Education', icon: GraduationCap, to: '/user-dashboard/education' },
     { name: 'Skills', icon: Lightbulb, to: '/user-dashboard/skills' },
     { name: 'Experiences', icon: Briefcase, to: '/user-dashboard/experience' },
     { name: 'Projects', icon: FolderKanban, to: '/user-dashboard/projects' },
-    { name: 'Preview Portfolio', icon: Eye, to: '/preview-portfolio', newTab: true },
   ];
 
   const toggleSidebar = () => setIsCollapsed((prev) => !prev);
