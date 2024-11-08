@@ -1,12 +1,63 @@
+const User = require("../models/authModel");
 const Project = require("../models/projectModels");
-
+const NodeCache = require('node-cache');
+const { uploadOnCloudinary } = require("../utils/cloudinary");
+const cache = new NodeCache({ stdTTL: 300 });
 const addProject = async (req, res) => {
-  const { title, description, techstack, githubRepo, liveLink } = req.body;
+  const { title, description, techstack, githubRepo, liveLink, projectImage } = req.body;
 
   try {
-    const newProject = new Project({ title, description, techstack, githubRepo, liveLink });
-    await newProject.save();
-    res.status(201).json({ message: 'Project created successfully', newProject });
+    const username = req.user.username;
+    const user = await User.findById(req.user.id).select('username');
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    let projectLocalPath;
+    console.log(`req.files: ${JSON.stringify(req.files)}`);
+
+
+    if (
+      req.files &&
+      Array.isArray(req.files.projectImage) &&
+      req.files.projectImage.length > 0
+    ) {
+      projectLocalPath = req.files.projectImage[0].path;
+    }
+    // console.log(`projectLocalPath: ${projectLocalPath}`);
+
+    if (!projectLocalPath) {
+      return res.status(400).json({
+        success: false,
+        message: 'Project image not found'
+      });
+    }
+    const projectImageUploadOnCloudinary = await uploadOnCloudinary(projectLocalPath);
+    // console.log(`projectImageUploadOnCloudinary: ${JSON.stringify(projectImageUploadOnCloudinary)}`);
+
+    if (!projectImageUploadOnCloudinary) {
+      return res.status(400).json({
+        success: false,
+        message: 'Project image upload failed'
+      });
+    }
+
+    const projectData = {
+      title,
+      description,
+      techstack,
+      githubRepo,
+      liveLink,
+      username: user.username,
+      projectImage: projectImageUploadOnCloudinary || 'https://via.placeholder.com/300x300'
+    };
+    const project = new Project(projectData);
+    const projectSavedData = await project.save();
+    const cacheKey = `project_${username}`;
+    cache.del(cacheKey);
+    res.status(201).json({ message: 'Project created successfully', ProjectData: projectSavedData });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -15,40 +66,208 @@ const addProject = async (req, res) => {
 // Get all projects
 const getProjects = async (req, res) => {
   try {
+    const username = req.user.username;
+    console.log(`Username: ${username}`);
+
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username parameter is missing'
+      });
+    }
+    const cacheKey = `project_${username}`;
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      return res.status(200).json({
+        success: true,
+        data: cachedData
+      });
+    }
+    console.log('Serving from database');
+
     const projects = await Project.find();
-    res.status(200).json(projects);
+    if (!projects || projects.length === 0) {
+      return res.status(404).json({ message: "Project record not found" });
+    }
+    const projectsObject = projects.map(project => project.toObject());
+
+    cache.set(cacheKey, projectsObject);
+
+    res.status(200).json({ success: true, data: projectsObject });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+// get Projects for portfolio
+const getProjectsForPortfolio = async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username parameter is missing'
+      });
+    }
+
+    const cacheKey = `project_${username}`;
+    console.log(`Cache key: ${cacheKey}`);
+    // Check if data exists in cache
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      console.log('Serving from cache');
+      return res.status(200).json({
+        success: true,
+        data: cachedData
+      });
+    }
+
+    // If not cached, fetch from the database
+    const projects = await Project.find({ username }).exec();
+    console.log(`TTL Limited Expire thats why serving from database`);
+
+    if (!projects || projects.length === 0) {
+      return res.status(404).json({ message: "Projects record not found" });
+    }
+
+    // Map each experience document to an object
+    const projectObjects = projects.map(pro => pro.toObject());
+
+    // Cache the data
+    cache.set(cacheKey, projectObjects);
+
+
+    return res.status(200).json({ experienceData: projectObjects });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 // Update a project
 const updateProject = async (req, res) => {
-  const { id } = req.params;
-  const { title, description, techstack, githubRepo, liveLink } = req.body;
-
   try {
-    const updatedProject = await Project.findByIdAndUpdate(
-      id,
-      { title, description, techstack, githubRepo, liveLink },
-      { new: true }
-    );
-    if (!updatedProject) return res.status(404).json({ message: 'Project not found' });
 
-    res.status(200).json({ message: 'Project updated successfully', updatedProject });
+    const { _id } = req.body;
+
+    // Validate user authentication
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
+    const username = req.user.username;
+
+    // Check if _id is provided in the request body
+    if (!_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Project ID (_id) is required"
+      });
+    }
+
+    // Fetch the existing project using _id
+    const existingProject = await Project.findOne({ _id });
+    if (!existingProject) {
+      return res.status(404).json({
+        success: false,
+        message: "Project record not found!"
+      });
+    }
+
+    let projectLocalPath;
+    // console.log(`req.files: ${JSON.stringify(req.files)}`);
+
+    if (
+      req.files &&
+      Array.isArray(req.files.projectImage) &&
+      req.files.projectImage.length > 0
+    ) {
+      projectLocalPath = req.files.projectImage[0].path;
+    }
+    const updateFields = {};
+    if (!projectLocalPath) {
+      return res.status(400).json({
+        success: false,
+        message: "Project image is required"
+      });
+    }
+    const projectImageUploadOnCloudinary = await uploadOnCloudinary(projectLocalPath);
+    if (!projectImageUploadOnCloudinary) {
+      return res.status(400).json({
+        success: false,
+        message: 'Project image upload failed'
+      });
+    }
+    console.log(`projectImageUploadOnCloudinary: ${JSON.stringify(projectImageUploadOnCloudinary)}`);
+    
+    // Add Cloudinary URL to updateFields
+    updateFields.projectImage = projectImageUploadOnCloudinary;
+
+
+    // Set up the update fields only if they're provided in the request body
+    if (req.body.title) updateFields.title = req.body.title;
+    if (req.body.description) updateFields.description = req.body.description;
+    if (req.body.techstack) updateFields.techstack = req.body.techstack;
+    if (req.body.githubRepo) updateFields.githubRepo = req.body.githubRepo;
+    if (req.body.liveLink) updateFields.liveLink = req.body.liveLink;
+    // Only add projectImage if it's newly uploaded
+    if (projectLocalPath) updateFields.projectImage = projectImageUploadOnCloudinary;
+
+    // Update the document
+    const updatedProject = await Project.findOneAndUpdate(
+      { _id },
+      { $set: updateFields },
+      {
+        new: true,
+        runValidators: false,
+        select: '-__v'
+      }
+    );
+
+    if (!updatedProject) {
+      return res.status(404).json({
+        success: false,
+        message: "Failed to update project record"
+      });
+    }
+
+    const cacheKey = `project_${username}`;
+    cache.del(cacheKey);
+
+    return res.status(200).json({
+      success: true,
+      message: "Project record updated successfully",
+      data: updatedProject
+    });
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error updating project:', error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating project",
+      error: error.message
+    });
   }
 };
 
 // Delete a project
 const deleteProject = async (req, res) => {
-  const { id } = req.params;
 
   try {
-    const deletedProject = await Project.findByIdAndDelete(id);
+    const _id = req.body._id;
+    const username = req.user.username;
+    if (!_id) {
+      return res.status(400).json({ message: 'Project ID (_id) is required' });
+    }
+    const deletedProject = await Project.findByIdAndDelete(_id);
     if (!deletedProject) return res.status(404).json({ message: 'Project not found' });
-
+    const cacheKey = `project_${username}`;
+    cache.del(cacheKey);
     res.status(200).json({ message: 'Project deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -60,4 +279,5 @@ module.exports = {
   getProjects,
   updateProject,
   deleteProject,
+  getProjectsForPortfolio
 };
