@@ -14,13 +14,15 @@ export default function UserExperience() {
   const [formData, setFormData] = useState({
     companyAndRole: '', 
     duration: '',       
-    responsibilities: '',
+    responsibilities: [], // Changed to an array to manage multiple responsibilities
   });
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
   
-  // Individual loading states
+  // Responsibility management
+  const [responsibility, setResponsibility] = useState('');
+
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -34,11 +36,21 @@ export default function UserExperience() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const addResponsibility = () => {
+    if (responsibility.trim()) {
+      setFormData((prev) => ({
+        ...prev,
+        responsibilities: [...prev.responsibilities, responsibility],
+      }));
+      setResponsibility('');
+    }
+  };
+
   const handleCreateClick = async () => {
     setIsCreating(true);
     try {
       await handleCreate(formData);
-      setFormData({ companyAndRole: '', duration: '', responsibilities: '' });
+      setFormData({ companyAndRole: '', duration: '', responsibilities: [] });
     } catch (error) {
       console.error('Create failed:', error);
     } finally {
@@ -50,10 +62,10 @@ export default function UserExperience() {
     if (isUpdateMode && selectedCompanyId) {
       setIsUpdating(true);
       try {
-        await handleUpdate({ ...formData, _id: selectedCompanyId});
+        await handleUpdate({ ...formData, _id: selectedCompanyId });
         setIsUpdateMode(false);
         setSelectedCompanyId('');
-        setFormData({ companyAndRole: '', duration: '', responsibilities: '' });
+        setFormData({ companyAndRole: '', duration: '', responsibilities: [] });
         window.location.reload();
       } catch (error) {
         console.error('Update failed:', error);
@@ -82,7 +94,7 @@ export default function UserExperience() {
     } else {
       setIsDeleteMode(true);
       setIsUpdateMode(false);
-      setFormData({ companyAndRole: '', duration: '', responsibilities: '' });
+      setFormData({ companyAndRole: '', duration: '', responsibilities: [] });
     }
   };
 
@@ -96,7 +108,7 @@ export default function UserExperience() {
         setFormData({
           companyAndRole: selectedExperience.companyAndRole,
           duration: selectedExperience.duration,
-          responsibilities: selectedExperience.responsibilities
+          responsibilities: selectedExperience.responsibilities || []
         });
       }
     }
@@ -118,7 +130,6 @@ export default function UserExperience() {
         </CardHeader>
         <CardContent>
           <form className="space-y-4">
-            {/* Experience ID Dropdown - Show for both Update and Delete modes */}
             {(isUpdateMode || isDeleteMode) && !loading && idAndCompanyRole.length > 0 && (
               <div className="space-y-2 mt-4">
                 <Label htmlFor="companyRoleDropdown" className="text-gray-300">
@@ -139,8 +150,6 @@ export default function UserExperience() {
                 </select>
               </div>
             )}
-
-            {/* Form Fields - Always show in create mode, show in update mode after selection */}
             {(!isDeleteMode) && (!isUpdateMode || (isUpdateMode && selectedCompanyId)) && (
               <div className="mt-2">
                 <div className="space-y-4 mt-4">
@@ -169,16 +178,26 @@ export default function UserExperience() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="responsibilities" className="text-gray-300">Responsibilities</Label>
-                    <Textarea
-                      id="responsibilities"
-                      name="responsibilities"
-                      value={formData.responsibilities}
-                      onChange={handleChange}
-                      rows={3}
-                      required
-                      className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
-                    />
+                    <Label htmlFor="responsibilities" className="text-gray-300">Add Responsibility</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="responsibility"
+                        placeholder="Enter a responsibility"
+                        value={responsibility}
+                        onChange={(e) => setResponsibility(e.target.value)}
+                        className="flex-grow bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                      <Button type="button" onClick={addResponsibility} className="bg-blue-500 hover:bg-blue-600 text-white">
+                        Add
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {formData.responsibilities.map((res, index) => (
+                        <span key={index} className="bg-gray-700 px-2 py-1 rounded text-sm text-gray-100 border border-gray-600">
+                          {res}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -189,20 +208,17 @@ export default function UserExperience() {
           <Button 
             className="bg-blue-600 hover:bg-blue-700 text-white"
             onClick={handleCreateClick}
-            
           >
             {isCreating ? 'Creating...' : 'Create'}
           </Button>
           <Button 
             className="bg-green-600 hover:bg-green-700 text-white" 
-            
             onClick={handleUpdateClick}
           >
             {isUpdating ? 'Updating...' : isUpdateMode ? 'Confirm Update' : 'Update'}
           </Button>
           <Button 
             className="bg-red-600 hover:bg-red-700 text-white" 
-           
             onClick={handleDeleteClick}
           >
             {isDeleting ? 'Deleting...' : isDeleteMode ? 'Confirm Delete' : 'Delete'}

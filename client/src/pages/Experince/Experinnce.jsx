@@ -1,16 +1,16 @@
-import React, { useEffect } from "react"
-import {useExperienceStore} from "../../Zustand/Expreince Store/useExperienceStore"
+import React, { useEffect } from "react";
+import { useExperienceStore } from "../../Zustand/Expreince Store/useExperienceStore";
 import { useParams } from "react-router-dom";
+
 export default function Experience() {
   const { username } = useParams();
   console.log(`username : ${username}`);
 
-  const { data, loading, source, fetchExpData} = useExperienceStore();
-  console.log(`data : ${JSON.stringify(data)}`);
+  const { data, loading, source, fetchExpData } = useExperienceStore();
   console.log(`source : ${source}`);
-// console.log(`idAndCompanyRole : ${JSON.stringify(idAndCompanyRole)}`);
 
   useEffect(() => {
+    console.log(`data : ${JSON.stringify(data)}`);
     fetchExpData(username);
   }, [fetchExpData, username]);
 
@@ -21,7 +21,7 @@ export default function Experience() {
       <div className="max-w-4xl mx-auto">
         <div className="relative mb-12">
           <h2 className="text-3xl font-bold inline-flex items-center gap-2">
-            Work Experience            
+            Work Experience
           </h2>
         </div>
 
@@ -29,26 +29,22 @@ export default function Experience() {
           {/* Timeline line */}
           <div className="absolute left-[11px] top-2 bottom-0 w-0.5 bg-gray-700" />
 
-          {/* Loop through each experience entry */}
-          {data.map((experience) => (
-            <div key={experience._id} className="relative">
+          {/* Corrected Loop */}
+          {data?.map((experience) => (
+            <div key={experience?._id} className="relative">
               {/* Timeline dot */}
-              <div className="absolute left-[-33px] w-6 h-6 rounded-full border-2 border-white bg-[#000814] flex items-center justify-center">
+              <div className="absolute left-[-33px] w-6 h-6 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center">
                 <div className="w-2 h-2 rounded-full bg-white" />
               </div>
-              
-              <div className="space-y-2">
-                <h3 className="text-xl font-semibold">
-                  {experience.companyAndRole}
-                </h3>
+              <div className="p-4 border border-gray-700 bg-gray-800 rounded-lg text-gray-100">
+                <h3 className="text-xl font-bold">{experience.companyAndRole}</h3>
                 <p className="text-gray-400">{experience.duration}</p>
-                
-                <div className="mt-4">
-                  <h4 className="font-semibold mb-2">Key Responsibilities:</h4>
-                  <ul className="space-y-2 text-gray-400">
-                    <li>• {experience.responsibilities}</li>
-                  </ul>
-                </div>
+                <h4 className="mt-2 font-semibold">Responsibilities:</h4>
+                <ul className="list-disc list-inside text-gray-300">
+                  {experience.responsibilities.map((res, index) => (
+                    <li key={`${experience._id}-responsibility-${index}`}>{res}</li>
+                  ))}
+                </ul>
               </div>
             </div>
           ))}

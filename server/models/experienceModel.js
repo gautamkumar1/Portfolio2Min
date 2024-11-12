@@ -14,10 +14,10 @@ const experienceSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  responsibilities: {
+  responsibilities:[ {
     type: String,
     required: true
-  }
+  }]
 }, {
   timestamps: true
 });
