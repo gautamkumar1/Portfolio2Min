@@ -13,6 +13,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  Target
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
@@ -24,6 +25,7 @@ import UserExperience from "./Experience/UserExperience";
 import useAuthStore from "../../Zustand/Auth Store/useAuthStore";
 import { toast } from 'sonner'
 import UserIntroduction from "./Introduction/UserIntroduction";
+import GetYourPortfolio from "../Get Your Portfolio/GetYourPortfolio";
 export default function UserDashboard() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,6 +40,7 @@ export default function UserDashboard() {
     { name: 'Skills', icon: Lightbulb, to: '/user-dashboard/skills' },
     { name: 'Experiences', icon: Briefcase, to: '/user-dashboard/experience' },
     { name: 'Projects', icon: FolderKanban, to: '/user-dashboard/projects' },
+    { name: 'Get Portfolio Link', icon: Target, to: '/user-dashboard/get-portfolio-your-link' },
   ];
 
   const toggleSidebar = () => setIsCollapsed((prev) => !prev);
@@ -221,6 +224,7 @@ export default function UserDashboard() {
             <Route path="skills" element={<UserSkills />} />
             <Route path="experience" element={<UserExperience />} />
             <Route path="projects" element={<UserProjects />} />
+            <Route path="get-portfolio-your-link" element={<GetYourPortfolio />} />
           </Routes>
         </div>
       </main>

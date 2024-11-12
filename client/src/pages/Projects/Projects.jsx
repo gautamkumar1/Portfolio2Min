@@ -2,50 +2,34 @@ import { Badge } from "../../../components/ui/badge"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card"
 import { Github, Globe } from "lucide-react"
-import { Link } from "react-router-dom"
-
-const projects = [
-  {
-    id: 1,
-    title: "Project Alpha",
-    description: "A cutting-edge web application for managing personal finances.",
-    image: "https://via.placeholder.com/300x200",
-    techStack: ["React", "Node.js", "MongoDB", "Express"],
-    githubLink: "https://github.com/yourusername/project-alpha",
-    liveLink: "https://project-alpha.example.com",
-  },
-  {
-    id: 2,
-    title: "Beta Dashboard",
-    description: "An intuitive dashboard for visualizing complex data sets.",
-    image: "https://via.placeholder.com/300x200",
-    techStack: ["Vue.js", "D3.js", "Firebase", "Tailwind CSS"],
-    githubLink: "https://github.com/yourusername/beta-dashboard",
-    liveLink: "https://beta-dashboard.example.com",
-  },
-  {
-    id: 3,
-    title: "Gamma API",
-    description: "A robust RESTful API for seamless integration with various platforms.",
-    image: "https://via.placeholder.com/300x200",
-    techStack: ["Python", "FastAPI", "PostgreSQL", "Docker"],
-    githubLink: "https://github.com/yourusername/gamma-api",
-    liveLink: "https://api.gamma-project.example.com",
-  },
-]
-
+import { Link, useParams } from "react-router-dom"
+import { useProjectStore } from "../../Zustand/Project Store/useProjectStore"
+import { useEffect } from "react"
 export default function Projects() {
+  const { username } = useParams();
+  console.log(`username : ${username}`);
+
+  const { data, loading, source, fetchProjectData} = useProjectStore();
+  console.log(`data : ${JSON.stringify(data)}`);
+  console.log(`source : ${source}`);
+// console.log(`idAndCompanyRole : ${JSON.stringify(idAndCompanyRole)}`);
+
+  useEffect(() => {
+    fetchProjectData(username);
+  }, [fetchProjectData, username]);
+
+  if (loading) return <p>Loading...</p>;
   return (
     <section className="bg-[#000814] text-white py-16">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12">My Projects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project) => (
-            <Card key={project.id} className="bg-[#101825] border-gray-700">
+          {data?.map((project) => (
+            <Card key={project._id} className="bg-[#101825] border-gray-700">
               <CardHeader className="p-0">
                 <img
                   loading="lazy"
-                  src={project.image}
+                  src={project.projectImage}
                   alt={`${project.title} preview`}
                   width={300}
                   height={200}
@@ -56,7 +40,7 @@ export default function Projects() {
                 <CardTitle className="text-xl font-semibold mb-2">{project.title}</CardTitle>
                 <p className="text-gray-300 mb-4">{project.description}</p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {project.techStack.map((tech) => (
+                  {project?.techstack?.map((tech) => (
                     <Badge key={tech} variant="secondary"
                       className="bg-[#1e293b] hover:bg-[#2d3c51] text-gray-200 px-3 sm:px-4 py-1 text-xs sm:text-sm rounded-full 
                     transition-all duration-200 border border-gray-700/50 hover:border-gray-600/50 hover:transform hover:scale-105">
@@ -73,7 +57,7 @@ export default function Projects() {
                   className="border-[#101825] text-gray-300 hover:bg-[#101825] hover:text-white"
                 >
                   <Link
-                    to={project.githubLink}
+                    to={project.githubRepo}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center"

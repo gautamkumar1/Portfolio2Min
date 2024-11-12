@@ -15,7 +15,6 @@ import Introduction from './pages/Introduction/Introduction'
 
 
 function App() {
-  const Userdata = JSON.parse(localStorage.getItem("userData"));
   const {isAuthenticated} = useAuthStore()
   const router = createBrowserRouter([
     {

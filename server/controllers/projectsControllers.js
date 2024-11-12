@@ -16,7 +16,7 @@ const addProject = async (req, res) => {
       });
     }
     let projectLocalPath;
-    console.log(`req.files: ${JSON.stringify(req.files)}`);
+    // console.log(`req.files: ${JSON.stringify(req.files)}`);
 
 
     if (
@@ -140,7 +140,7 @@ const getProjectsForPortfolio = async (req, res) => {
     cache.set(cacheKey, projectObjects);
 
 
-    return res.status(200).json({ experienceData: projectObjects });
+    return res.status(200).json({ success: true, ProjectData: projectObjects });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -149,8 +149,9 @@ const getProjectsForPortfolio = async (req, res) => {
 // Update a project
 const updateProject = async (req, res) => {
   try {
-
     const { _id } = req.body;
+    console.log(`_id: ${JSON.stringify(req.body)}`);
+    
 
     // Validate user authentication
     if (!req.user || !req.user.id) {
@@ -179,52 +180,44 @@ const updateProject = async (req, res) => {
       });
     }
 
-    let projectLocalPath;
-    // console.log(`req.files: ${JSON.stringify(req.files)}`);
+    // Set up the update fields only if they're provided in the request body
+    const updateFields = {};
 
+    const fieldsToUpdate = ['title', 'description', 'techstack', 'githubRepo', 'liveLink'];
+    fieldsToUpdate.forEach((field) => {
+      const value = req.body[field];
+      if (value !== undefined && value !== "undefined" && value !== "null") {
+        updateFields[field] = value;
+      }
+    });
+    // Handle image upload only if a new image is provided
+    let projectLocalPath;
     if (
       req.files &&
       Array.isArray(req.files.projectImage) &&
       req.files.projectImage.length > 0
     ) {
       projectLocalPath = req.files.projectImage[0].path;
+      const projectImageUploadOnCloudinary = await uploadOnCloudinary(projectLocalPath);
+
+      if (!projectImageUploadOnCloudinary) {
+        return res.status(400).json({
+          success: false,
+          message: 'Project image upload failed'
+        });
+      }
+      updateFields.projectImage = projectImageUploadOnCloudinary;
     }
-    const updateFields = {};
-    if (!projectLocalPath) {
-      return res.status(400).json({
-        success: false,
-        message: "Project image is required"
-      });
-    }
-    const projectImageUploadOnCloudinary = await uploadOnCloudinary(projectLocalPath);
-    if (!projectImageUploadOnCloudinary) {
-      return res.status(400).json({
-        success: false,
-        message: 'Project image upload failed'
-      });
-    }
-    console.log(`projectImageUploadOnCloudinary: ${JSON.stringify(projectImageUploadOnCloudinary)}`);
+
+    // Update the document only with the fields specified in `updateFields`
+    // console.log(`updateFields: ${JSON.stringify(updateFields)}`);
     
-    // Add Cloudinary URL to updateFields
-    updateFields.projectImage = projectImageUploadOnCloudinary;
-
-
-    // Set up the update fields only if they're provided in the request body
-    if (req.body.title) updateFields.title = req.body.title;
-    if (req.body.description) updateFields.description = req.body.description;
-    if (req.body.techstack) updateFields.techstack = req.body.techstack;
-    if (req.body.githubRepo) updateFields.githubRepo = req.body.githubRepo;
-    if (req.body.liveLink) updateFields.liveLink = req.body.liveLink;
-    // Only add projectImage if it's newly uploaded
-    if (projectLocalPath) updateFields.projectImage = projectImageUploadOnCloudinary;
-
-    // Update the document
     const updatedProject = await Project.findOneAndUpdate(
       { _id },
       { $set: updateFields },
       {
         new: true,
-        runValidators: false,
+        runValidators: true,
         select: '-__v'
       }
     );
@@ -241,8 +234,7 @@ const updateProject = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Project record updated successfully",
-      data: updatedProject
+      message: "Project record updated successfully"
     });
 
   } catch (error) {
@@ -254,6 +246,7 @@ const updateProject = async (req, res) => {
     });
   }
 };
+
 
 // Delete a project
 const deleteProject = async (req, res) => {
