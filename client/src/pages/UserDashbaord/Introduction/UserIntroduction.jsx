@@ -9,29 +9,39 @@ import { useUserIntroStoreForPost } from '../../../Zustand/Intro Store/useIntrod
 
 
 export default function UserIntroduction() {
-const { formData, isLoading, isCreate, handleCreate, handleDelete, handleUpdate } = useUserIntroStoreForPost();
-const [introData, setIntroData] = useState({
-  ...formData,
-  socialLinks: formData.socialLinks || {}, // Default to an empty object if undefined
-});
+  const { formData, isLoading, isCreate, handleCreate, handleDelete, handleUpdate } = useUserIntroStoreForPost();
+  const [introData, setIntroData] = useState({
+    ...formData,
+    socialLinks: formData.socialLinks || {}, // Default to an empty object if undefined
+  });
+  const [file, setFile] = useState(null);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setIntroData((prev) => ({ ...prev, [name]: value }));
+  };
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  setIntroData((prev) => ({ ...prev, [name]: value }));
-};
+  const handleSocialChange = (e) => {
+    const { name, value } = e.target;
+    setIntroData((prev) => ({
+      ...prev,
+      socialLinks: { ...prev.socialLinks, [name]: value },
+    }));
+  };
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
 
-const handleSocialChange = (e) => {
-  const { name, value } = e.target;
-  setIntroData((prev) => ({
-    ...prev,
-    socialLinks: { ...prev.socialLinks, [name]: value },
-  }));
-};
 
-
-const handleStatusChange = (value) => {
-  setIntroData((prev) => ({ ...prev, status: value }));
-};
+  const handleStatusChange = (value) => {
+    setIntroData((prev) => ({ ...prev, status: value }));
+  };
+  useEffect(() => {
+    console.log(`file : ${JSON.stringify(file)}`);
+    console.log(`introData : ${JSON.stringify(introData)}`);
+    
+  })
 
   return (
     <div className="w-full flex items-center justify-center p-4 overflow-y-auto">
@@ -49,16 +59,16 @@ const handleStatusChange = (value) => {
         </CardHeader>
         <CardContent>
           <form className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="fullName" className="text-gray-300">Full Name</Label>
-                <Input 
-                  id="fullName" 
-                  name="fullName" 
+                <Input
+                  id="fullName"
+                  name="fullName"
                   placeholder="Enter your full name"
-                  value={introData?.fullName || ''} 
-                  onChange={handleChange} 
-                  required 
+                  value={introData?.fullName || ''}
+                  onChange={handleChange}
+                  required
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -78,112 +88,107 @@ const handleStatusChange = (value) => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="title" className="text-gray-300">Title</Label>
-              <Input 
-                id="title" 
-                name="title" 
+              <Input
+                id="title"
+                name="title"
                 placeholder="e.g., Full Stack Developer"
-                value={introData?.title || ''} 
-                onChange={handleChange} 
-                required 
+                value={introData?.title || ''}
+                onChange={handleChange}
+                required
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="location" className="text-gray-300">Location</Label>
-              <Input 
-                id="location" 
-                name="location" 
+              <Input
+                id="location"
+                name="location"
                 placeholder="e.g., Noida,Up,India"
-                value={introData?.location || ''} 
-                onChange={handleChange} 
-                required 
+                value={introData?.location || ''}
+                onChange={handleChange}
+                required
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div className="space-y-2">
               <Label className="text-gray-300">Social Links</Label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Input 
-                  placeholder="Gmail" 
-                  name="gmail" 
-                  value={introData?.socialLinks.gmail || ''} 
-                  onChange={handleSocialChange} 
+                <Input
+                  placeholder="Gmail"
+                  name="gmail"
+                  value={introData?.socialLinks.gmail || ''}
+                  onChange={handleSocialChange}
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <Input 
-                  placeholder="Phone" 
-                  name="phone" 
-                  value={introData?.socialLinks.phone || ''} 
-                  onChange={handleSocialChange} 
+                <Input
+                  placeholder="Phone"
+                  name="phone"
+                  value={introData?.socialLinks.phone || ''}
+                  onChange={handleSocialChange}
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <Input 
-                  placeholder="GitHub" 
-                  name="github" 
-                  value={introData?.socialLinks.github || ''} 
-                  onChange={handleSocialChange} 
+                <Input
+                  placeholder="GitHub"
+                  name="github"
+                  value={introData?.socialLinks.github || ''}
+                  onChange={handleSocialChange}
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <Input 
-                  placeholder="LinkedIn" 
-                  name="linkedin" 
-                  value={introData?.socialLinks.linkedin || ''} 
-                  onChange={handleSocialChange} 
+                <Input
+                  placeholder="LinkedIn"
+                  name="linkedin"
+                  value={introData?.socialLinks.linkedin || ''}
+                  onChange={handleSocialChange}
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <Input 
-                  placeholder="Twitter" 
-                  name="twitter" 
-                  value={introData?.socialLinks.twitter || ''} 
-                  onChange={handleSocialChange} 
+                <Input
+                  placeholder="Twitter"
+                  name="twitter"
+                  value={introData?.socialLinks.twitter || ''}
+                  onChange={handleSocialChange}
                   className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="image" className="text-gray-300">Image URL</Label>
-              <Input 
-                id="image" 
-                name="image" 
-                placeholder="Enter image URL"
-                value={introData?.image || ''} 
-                onChange={handleChange} 
-                type="url" 
+              <Label htmlFor="image" className="text-gray-300">Upload Image</Label>
+              <Input
+                id="image"
+                name="image"
+                type="file"
+                onChange={handleFileChange}
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="about" className="text-gray-300">About</Label>
-              <Textarea 
-                id="about" 
-                name="about" 
+              <Textarea
+                id="about"
+                name="about"
                 placeholder="Tell us about yourself"
-                value={introData?.about || ''} 
-                onChange={handleChange} 
-                rows={4} 
+                value={introData?.about || ''}
+                onChange={handleChange}
+                rows={4}
                 className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center space-x-4 mt-4">
-          <Button 
-            className="bg-blue-600 hover:bg-blue-700 text-white" 
-            disabled={isCreate} 
-            onClick={()=>handleCreate(introData)}
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={() => handleCreate(introData,file)}
           >
             {isLoading ? 'Creating...' : 'Create'}
           </Button>
-          <Button 
-            className="bg-green-600 hover:bg-green-700 text-white" 
-            disabled={!isCreate} 
-            onClick={()=>handleUpdate(introData)}
+          <Button
+            className="bg-green-600 hover:bg-green-700 text-white"
+            onClick={() => handleUpdate(introData)}
           >
             {isLoading ? 'Updating...' : 'Update'}
           </Button>
-          <Button 
-            className="bg-red-600 hover:bg-red-700 text-white" 
-            disabled={!isCreate} 
+          <Button
+            className="bg-red-600 hover:bg-red-700 text-white"
             onClick={handleDelete}
           >
             {isLoading ? 'Deleting...' : 'Delete'}

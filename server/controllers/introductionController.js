@@ -2,22 +2,18 @@ const mongoose = require("mongoose");
 const introductionModel = require("../models/introductionModel");
 const NodeCache = require('node-cache');
 const User = require("../models/authModel");
+const { uploadOnCloudinary } = require("../utils/cloudinary");
 const cache = new NodeCache({ stdTTL: 300 }); // Cache TTL set to 5 minutes
 
 
 exports.createIntroduction = async (req, res) => {
+console.log(`req.body: ${JSON.stringify(req.body)}`);
+
     try {
-        const { fullName, status, title, socialLinks, image, about, location } = req.body;
+        const { fullName, status, title, about, location } = req.body;
+        
+        const socialLinks = JSON.parse(req.body.socialLinks);
 
-        // Check for required fields
-        if (!fullName || !status || !title || !socialLinks || !image || !about || !location) {
-            return res.status(400).json({
-                success: false,
-                message: 'All fields are required'
-            });
-        }
-
-        // Validate user authentication
         if (!req.user || !req.user.id) {
             return res.status(401).json({
                 success: false,
@@ -27,8 +23,8 @@ exports.createIntroduction = async (req, res) => {
 
         const userId = new mongoose.Types.ObjectId(req.user.id);
 
-        // Fetch username from the User model
-        const user = await User.findById(userId).select('username'); // Assuming 'username' is a field in your User model
+        // Check if user exists
+        const user = await User.findById(userId).select('username');
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -36,21 +32,40 @@ exports.createIntroduction = async (req, res) => {
             });
         }
 
+        // Handle image upload
+        const imageLocalPath = req.files?.image[0]?.path;
+        
+        if (!imageLocalPath) {
+            return res.status(400).json({
+                success: false,
+                message: 'Profile image not found'
+            });
+        }
+
+        const ImageUploadOnCloudinary = await uploadOnCloudinary(imageLocalPath);
+        if (!ImageUploadOnCloudinary) {
+            return res.status(400).json({
+                success: false,
+                message: 'Profile image upload failed'
+            });
+        }
+
+
+        // Create introduction data
         const introductionData = {
             userId,
-            username: user.username, // Automatically set the username from the user model
+            username: user.username,
             fullName,
             status,
             title,
             socialLinks,
-            image,
+            image: ImageUploadOnCloudinary,
             about,
             location
         };
 
-        // Check if an introduction already exists for the user
+        // Check if introduction already exists for this user
         const existingIntroduction = await introductionModel.findOne({ userId }).exec();
-
         if (existingIntroduction) {
             return res.status(400).json({
                 success: false,
@@ -58,6 +73,7 @@ exports.createIntroduction = async (req, res) => {
             });
         }
 
+        // Save new introduction
         const introduction = new introductionModel(introductionData);
         const savedIntroduction = await introduction.save();
 
@@ -111,7 +127,7 @@ exports.getIntroduction = async (req, res) => {
         // Check if data exists in cache
         const cachedData = cache.get(cacheKey);
         console.log(`Cached data: ${cachedData}`);
-        
+
         if (cachedData) {
             console.log('Serving from cache');
             return res.status(200).json({
@@ -123,7 +139,7 @@ exports.getIntroduction = async (req, res) => {
         // If not cached, fetch from the database
         const introduction = await introductionModel.findOne({ userId: new mongoose.Types.ObjectId(userId) }).exec();
         console.log(`TTL Limited Expire thats why serving from database`);
-        
+
         console.log(`Introduction: ${introduction}`);
 
         if (!introduction) {
@@ -222,7 +238,7 @@ exports.updateIntroduction = async (req, res) => {
         }
         const username = req.user.username;
         // console.log(`Username: ${username}`);
-        
+
 
         if (!username) {
             return res.status(400).json({
@@ -267,7 +283,7 @@ exports.updateIntroduction = async (req, res) => {
             ...(about && { about }),
             ...(location && { location }),
             updatedAt: new Date()
-          };
+        };
 
         // Update the introduction
         const updatedIntroduction = await introductionModel.findOneAndUpdate(

@@ -81,21 +81,36 @@ const useUserIntroStoreForPost = create(
           linkedin: '',
           twitter: '',
         },
-        image: '',
+        image: '', // This will store the image file path or data URL, used for display or sending
         about: '',
       },
       isCreate: false,
       isLoading: false,
-      handleCreate: async (data) => {
+      handleCreate: async (data,file) => {
         set({ isLoading: true });
         try {
+          const formData = new FormData(); // Create a new FormData object
+          
+          // Append all text fields to the formData
+          formData.append("fullName", data.fullName);
+          formData.append("status", data.status);
+          formData.append("title", data.title);
+          formData.append("location", data.location);
+          formData.append("about", data.about);
+          
+          formData.append('socialLinks', JSON.stringify(data.socialLinks));
+
+          // Append image file if exists
+          if (file) {
+            formData.append("image", file); // Assuming `data.image` is a file object (from the file upload input)
+          }
+
           const response = await fetch("/api/user/createIntro", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+              "Authorization": `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
             },
-            body: JSON.stringify(data),
+            body: formData, // Send FormData as the body
           });
           const responseData = await response.json();
           if (response.ok) {
@@ -118,13 +133,33 @@ const useUserIntroStoreForPost = create(
       handleUpdate: async (data) => {
         set({ isLoading: true });
         try {
+          const formData = new FormData(); // Create a new FormData object for update
+
+          // Append all text fields to the formData
+          formData.append("fullName", data.fullName);
+          formData.append("status", data.status);
+          formData.append("title", data.title);
+          formData.append("location", data.location);
+          formData.append("about", data.about);
+          
+          // Append social links
+          formData.append("socialLinks[gmail]", data.socialLinks.gmail);
+          formData.append("socialLinks[phone]", data.socialLinks.phone);
+          formData.append("socialLinks[github]", data.socialLinks.github);
+          formData.append("socialLinks[linkedin]", data.socialLinks.linkedin);
+          formData.append("socialLinks[twitter]", data.socialLinks.twitter);
+
+          // Append image file if exists
+          if (data.image) {
+            formData.append("image", data.image); // Assuming `data.image` is a file object (from the file upload input)
+          }
+
           const response = await fetch("/api/user/updateIntro", {
             method: "PUT",
             headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+              "Authorization": `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
             },
-            body: JSON.stringify(data),
+            body: formData, // Send FormData as the body
           });
           const responseData = await response.json();
           if (response.ok) {
@@ -183,7 +218,6 @@ const useUserIntroStoreForPost = create(
     }
   )
 );
-
 
 
 export { useIntroductionStore, useUserIntroStoreForPost };

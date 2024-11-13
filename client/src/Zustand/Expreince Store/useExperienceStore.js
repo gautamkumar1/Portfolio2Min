@@ -5,14 +5,19 @@ const fallbackData = [
     {
         "companyAndRole": "Excellence Technologies@Full-Stack Developer",
         "duration": "2 years",
-        "responsibilities": "Developed and maintained web applications using React and Node.js, and optimized performance and scalability. Worked with a team of developers to develop reusable and maintainable code. Worked with a team of developers to develop reusable and maintainable code."
+        "responsibilities": [
+            "Built RESTful APIs and integrated them with front-end applications.",
+            "Optimized performance and scalability.",
+            "Worked with a team of developers to develop reusable and maintainable code.",]
         
     },
     {
         "companyAndRole": "Tech Innovators@Software Engineer",
         "duration": "1.5 years",
-        "responsibilities":"Built RESTful APIs and integrated them with front-end applications. Optimized performance and scalability. Worked with a team of developers to develop reusable and maintainable code. Worked with a team of developers to develop reusable and maintainable code.",
-
+        "responsibilities": [
+            "Contributed to the development of web applications using React and Node.js.",
+            "Implemented responsive design and cross-browser compatibility.",
+            "Collaborated with cross-functional teams to deliver high-quality software solutions.",]
     }
 ];
 

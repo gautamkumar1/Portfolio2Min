@@ -72,19 +72,19 @@ export default function Introduction() {
 
           {/* Social Links */}
           <div className="flex gap-3 pt-4 flex-wrap justify-center sm:justify-start">
-            <a href={`mailto:${displayData.socialLinks.gmail}`} aria-label="Email">
+            <a href={`mailto:${displayData?.socialLinks?.gmail}`} aria-label="Email">
               <Mail className="w-5 h-5" />
             </a>
-            <a href={`tel:${displayData.socialLinks.phone}`} aria-label="Phone">
+            <a href={`tel:${displayData?.socialLinks?.phone}`} aria-label="Phone">
               <Phone className="w-5 h-5" />
             </a>
-            <a href={displayData.socialLinks.github} aria-label="Github">
+            <a href={displayData?.socialLinks?.github} aria-label="Github">
               <Github className="w-5 h-5" />
             </a>
-            <a href={displayData.socialLinks.linkedin} aria-label="LinkedIn">
+            <a href={displayData?.socialLinks?.linkedin} aria-label="LinkedIn">
               <Linkedin className="w-5 h-5" />
             </a>
-            <a href={displayData.socialLinks.twitter} aria-label="Twitter">
+            <a href={displayData?.socialLinks?.twitter} aria-label="Twitter">
               <Twitter className="w-5 h-5" />
             </a>
           </div>
