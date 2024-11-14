@@ -7,8 +7,6 @@ const cache = new NodeCache({ stdTTL: 300 }); // Cache TTL set to 5 minutes
 
 
 exports.createIntroduction = async (req, res) => {
-console.log(`req.body: ${JSON.stringify(req.body)}`);
-
     try {
         const { fullName, status, title, about, location } = req.body;
         
@@ -227,77 +225,127 @@ exports.getIntroductionForPortfolio = async (req, res) => {
 // Update introduction
 exports.updateIntroduction = async (req, res) => {
     try {
-        const { fullName, status, title, socialLinks, image, about, location } = req.body;
-
-        // Validate user authentication
         if (!req.user || !req.user.id) {
             return res.status(401).json({
                 success: false,
-                message: 'User not authenticated'
+                message: 'User not authenticated',
             });
         }
-        const username = req.user.username;
-        // console.log(`Username: ${username}`);
 
-
-        if (!username) {
-            return res.status(400).json({
-                success: false,
-                message: 'Username parameter is missing'
-            });
-        }
         const userId = new mongoose.Types.ObjectId(req.user.id);
 
-        // Validate required fields
-        if (fullName && fullName.length < 3) {
-            return res.status(400).json({
+        // Find user
+        const user = await User.findById(userId).select('username');
+        if (!user) {
+            return res.status(404).json({
                 success: false,
-                message: 'Full name must be at least 3 characters long'
+                message: 'User not found',
             });
         }
 
-        if (title && title.length < 3) {
-            return res.status(400).json({
-                success: false,
-                message: 'Title must be at least 3 characters long'
-            });
-        }
-
-        // Find existing introduction
+        // Find existing introduction first
         const existingIntroduction = await introductionModel.findOne({ userId }).exec();
-
         if (!existingIntroduction) {
             return res.status(404).json({
                 success: false,
-                message: 'Introduction not found. Please create one first.'
+                message: 'Introduction not found. Please create one first.',
             });
         }
 
-        // Prepare update data
-        const updateData = {
-            ...(fullName && { fullName }),
-            ...(status && { status }),
-            ...(title && { title }),
-            ...(socialLinks && Object.keys(socialLinks).length > 0 && { socialLinks }),  // Only include socialLinks if it has valid properties
-            ...(image && { image }),
-            ...(about && { about }),
-            ...(location && { location }),
-            updatedAt: new Date()
+        // Handle image upload
+        let updatedImage = null;
+        if (req.files?.image) {
+            const imageLocalPath = req.files.image[0]?.path;
+            if (!imageLocalPath) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Profile image not found',
+                });
+            }
+
+            const imageUploadOnCloudinary = await uploadOnCloudinary(imageLocalPath);
+            if (!imageUploadOnCloudinary) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Profile image upload failed',
+                });
+            }
+
+            updatedImage = imageUploadOnCloudinary;
+        }
+
+        // Start with existing values
+        let updateData = {
+            fullName: existingIntroduction.fullName,
+            status: existingIntroduction.status,
+            title: existingIntroduction.title,
+            about: existingIntroduction.about,
+            location: existingIntroduction.location,
+            socialLinks: existingIntroduction.socialLinks,
+            image: existingIntroduction.image
         };
 
-        // Update the introduction
+        // Update only provided fields
+        const bodyKeys = Object.keys(req.body);
+
+        if (bodyKeys.includes('fullName')) updateData.fullName = req.body.fullName;
+        if (bodyKeys.includes('status')) updateData.status = req.body.status;
+        if (req.body.title !== "undefined") updateData.title = req.body.title;
+        if (req.body.about !== "undefined") updateData.about = req.body.about;
+        if (req.body.location !== "undefined") updateData.location = req.body.location;
+        
+        // Handle social links update
+        if (bodyKeys.includes('socialLinks')) {
+            try {
+                const newSocialLinks = JSON.parse(req.body.socialLinks);
+                updateData.socialLinks = {
+                    ...existingIntroduction.socialLinks,
+                    ...newSocialLinks
+                };
+            } catch (error) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid social links format',
+                });
+            }
+        }
+
+        if (updatedImage) {
+            updateData.image = updatedImage;
+        }
+
+        // Add updatedAt
+        updateData.updatedAt = new Date();
+
+        // Validate status enum if provided
+        if (bodyKeys.includes('status') && !['#openToWork', 'Hire Me!', 'Open to Opportunity'].includes(updateData.status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status value, Please provided correct status value.',
+                validValues: ['#openToWork', 'Hire Me!', 'Open to Opportunity']
+            });
+        }
+
+        // Update document with merged data
         const updatedIntroduction = await introductionModel.findOneAndUpdate(
             { userId },
             { $set: updateData },
-            { new: true, runValidators: false }
+            { 
+                new: true,
+                runValidators: true
+            }
         ).exec();
+
+        // Clear cache
         cache.del(`intro_${userId}`);
-        cache.del(`intro_${username}`);
+        cache.del(`intro_${user.username}`);
+
         return res.status(200).json({
             success: true,
             message: 'Introduction updated successfully',
-            data: updatedIntroduction
+            data: updatedIntroduction,
         });
+
     } catch (error) {
         console.error('Error in updateIntroduction:', error);
 
@@ -305,18 +353,17 @@ exports.updateIntroduction = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: 'Validation error',
-                errors: error.errors
+                errors: error.errors,
             });
         }
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Error updating introduction',
-            error: error.message
+            error: error.message,
         });
     }
 };
-
 // Delete introduction
 exports.deleteIntroduction = async (req, res) => {
     try {

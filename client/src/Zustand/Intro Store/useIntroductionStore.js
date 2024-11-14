@@ -85,9 +85,12 @@ const useUserIntroStoreForPost = create(
         about: '',
       },
       isCreate: false,
-      isLoading: false,
+      isCreateLoading: false,
+      isUpdateLoading: false,
+      isDeleteLoading: false,
       handleCreate: async (data,file) => {
-        set({ isLoading: true });
+        set({ isCreateLoading: true });
+        set({ isCreate: true });
         try {
           const formData = new FormData(); // Create a new FormData object
           
@@ -127,11 +130,12 @@ const useUserIntroStoreForPost = create(
         } catch (error) {
           toast.error("Error creating introduction");
         } finally {
-          set({ isLoading: false });
+          set({ isCreateLoading: false });
+          set({ isCreate: false });
         }
       },
-      handleUpdate: async (data) => {
-        set({ isLoading: true });
+      handleUpdate: async (data,file) => {
+        set({ isUpdateLoading: true });
         try {
           const formData = new FormData(); // Create a new FormData object for update
 
@@ -142,16 +146,11 @@ const useUserIntroStoreForPost = create(
           formData.append("location", data.location);
           formData.append("about", data.about);
           
-          // Append social links
-          formData.append("socialLinks[gmail]", data.socialLinks.gmail);
-          formData.append("socialLinks[phone]", data.socialLinks.phone);
-          formData.append("socialLinks[github]", data.socialLinks.github);
-          formData.append("socialLinks[linkedin]", data.socialLinks.linkedin);
-          formData.append("socialLinks[twitter]", data.socialLinks.twitter);
+          formData.append('socialLinks', JSON.stringify(data.socialLinks));
 
           // Append image file if exists
-          if (data.image) {
-            formData.append("image", data.image); // Assuming `data.image` is a file object (from the file upload input)
+          if (file) {
+            formData.append("image", file); 
           }
 
           const response = await fetch("/api/user/updateIntro", {
@@ -162,19 +161,22 @@ const useUserIntroStoreForPost = create(
             body: formData, // Send FormData as the body
           });
           const responseData = await response.json();
+          console.log(`responseData: ${JSON.stringify(responseData)}`);
+          
           if (response.ok) {
             toast.success("Introduction updated successfully");
           } else {
+            
             toast.error(responseData.message || "Error updating introduction");
           }
         } catch (error) {
           toast.error("Error updating introduction");
         } finally {
-          set({ isLoading: false });
+          set({ isUpdateLoading: false });
         }
       },
       handleDelete: async () => {
-        set({ isLoading: true });
+        set({ isDeleteLoading: true });
         try {
           const response = await fetch(`/api/user/deleteIntro`, {
             method: "DELETE",
@@ -183,6 +185,8 @@ const useUserIntroStoreForPost = create(
               "Authorization": `Bearer ${localStorage.getItem("token")}`,
             },
           });
+          
+          const responseData = await response.json();
           if (response.ok) {
             set({
               formData: {
@@ -204,12 +208,13 @@ const useUserIntroStoreForPost = create(
             });
             toast.success("Introduction deleted successfully");
           } else {
-            toast.error("Error deleting introduction");
+            toast.error(responseData.message);
           }
         } catch (error) {
+          
           toast.error("Error deleting introduction");
         } finally {
-          set({ isLoading: false });
+          set({ isDeleteLoading: false });
         }
       },
     }),

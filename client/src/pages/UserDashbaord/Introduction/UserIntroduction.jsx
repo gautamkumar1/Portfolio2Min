@@ -9,7 +9,7 @@ import { useUserIntroStoreForPost } from '../../../Zustand/Intro Store/useIntrod
 
 
 export default function UserIntroduction() {
-  const { formData, isLoading, isCreate, handleCreate, handleDelete, handleUpdate } = useUserIntroStoreForPost();
+  const { formData, isCreateLoading, isUpdateLoading,isDeleteLoading, isCreate, handleCreate, handleDelete, handleUpdate } = useUserIntroStoreForPost();
   const [introData, setIntroData] = useState({
     ...formData,
     socialLinks: formData.socialLinks || {}, // Default to an empty object if undefined
@@ -177,21 +177,22 @@ export default function UserIntroduction() {
         <CardFooter className="flex justify-center space-x-4 mt-4">
           <Button
             className="bg-blue-600 hover:bg-blue-700 text-white"
+            
             onClick={() => handleCreate(introData,file)}
           >
-            {isLoading ? 'Creating...' : 'Create'}
+            {isCreateLoading ? 'Creating...' : 'Create'}
           </Button>
           <Button
             className="bg-green-600 hover:bg-green-700 text-white"
-            onClick={() => handleUpdate(introData)}
+            onClick={() => handleUpdate(introData,file)}
           >
-            {isLoading ? 'Updating...' : 'Update'}
+            {isUpdateLoading ? 'Updating...' : 'Update'}
           </Button>
           <Button
             className="bg-red-600 hover:bg-red-700 text-white"
             onClick={handleDelete}
           >
-            {isLoading ? 'Deleting...' : 'Delete'}
+            {isDeleteLoading ? 'Deleting...' : 'Delete'}
           </Button>
         </CardFooter>
       </Card>
