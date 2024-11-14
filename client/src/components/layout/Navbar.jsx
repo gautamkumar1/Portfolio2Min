@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Portfolio2MinLogo from '../../assets/Portfolio2Min_Logo.png';
-// import { AvatarDemo } from './Avatar';
 import useAuthStore from "../../Zustand/Auth Store/useAuthStore"
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,9 +10,6 @@ const Navbar = () => {
   const navLinks = [
     { to: "/howitworks", label: "How It Works" },
     { to: "/features", label: "Features" },
-    { to: "/feedback", label: "Feedback" },
-    { to: "/projects", label: "Projects" },
-    { to: "/blog", label: "Blog" }
   ];
 
   return (

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Faq from "../pages/Faq/Faq";
 import Features from "../pages/Features/Features"
 import HowItWorks from "../pages/How it works/HowItWorks"
@@ -22,11 +23,13 @@ export default function LandingPage() {
             <button className="relative block group w-full sm:w-48">
               <span className="absolute inset-0 bg-indigo-500 rounded-lg"></span>
               <div className="relative bg-zinc-950 border-2 border-indigo-500 rounded-lg transition-all duration-200 -translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0">
+                <Link to={"/login"}>
                 <div className="px-4 sm:px-6 py-3">
                   <p className="text-base sm:text-lg font-semibold text-white whitespace-nowrap">
                     Get Started
                   </p>
                 </div>
+                </Link>
               </div>
             </button>
 

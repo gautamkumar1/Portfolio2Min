@@ -3,6 +3,68 @@ const Project = require("../models/projectModels");
 const NodeCache = require('node-cache');
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 const cache = new NodeCache({ stdTTL: 300 });
+// const addProject = async (req, res) => {
+//   const { title, description, techstack, githubRepo, liveLink, projectImage } = req.body;
+
+//   try {
+//     const username = req.user.username;
+//     const user = await User.findById(req.user.id).select('username');
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'User not found'
+//       });
+//     }
+//     let projectLocalPath;
+//     // console.log(`req.files: ${JSON.stringify(req.files)}`);
+
+
+//     if (
+//       req.files &&
+//       Array.isArray(req.files.projectImage) &&
+//       req.files.projectImage.length > 0
+//     ) {
+//       projectLocalPath = req.files.projectImage[0].path;
+//     }
+//     // console.log(`projectLocalPath: ${projectLocalPath}`);
+
+//     if (!projectLocalPath) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Project image not found'
+//       });
+//     }
+//     const projectImageUploadOnCloudinary = await uploadOnCloudinary(projectLocalPath);
+//     // console.log(`projectImageUploadOnCloudinary: ${JSON.stringify(projectImageUploadOnCloudinary)}`);
+
+//     if (!projectImageUploadOnCloudinary) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Project image upload failed'
+//       });
+//     }
+
+//     const projectData = {
+//       title,
+//       description,
+//       techstack,
+//       githubRepo,
+//       liveLink,
+//       username: user.username,
+//       projectImage: projectImageUploadOnCloudinary || 'https://via.placeholder.com/300x300'
+//     };
+//     const project = new Project(projectData);
+//     const projectSavedData = await project.save();
+//     const cacheKey = `project_${username}`;
+//     cache.del(cacheKey);
+//     res.status(201).json({ message: 'Project created successfully', ProjectData: projectSavedData });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+// Get all projects
+
 const addProject = async (req, res) => {
   const { title, description, techstack, githubRepo, liveLink, projectImage } = req.body;
 
@@ -15,9 +77,8 @@ const addProject = async (req, res) => {
         message: 'User not found'
       });
     }
-    let projectLocalPath;
-    // console.log(`req.files: ${JSON.stringify(req.files)}`);
 
+    let projectLocalPath;
 
     if (
       req.files &&
@@ -26,7 +87,6 @@ const addProject = async (req, res) => {
     ) {
       projectLocalPath = req.files.projectImage[0].path;
     }
-    // console.log(`projectLocalPath: ${projectLocalPath}`);
 
     if (!projectLocalPath) {
       return res.status(400).json({
@@ -34,8 +94,8 @@ const addProject = async (req, res) => {
         message: 'Project image not found'
       });
     }
+
     const projectImageUploadOnCloudinary = await uploadOnCloudinary(projectLocalPath);
-    // console.log(`projectImageUploadOnCloudinary: ${JSON.stringify(projectImageUploadOnCloudinary)}`);
 
     if (!projectImageUploadOnCloudinary) {
       return res.status(400).json({
@@ -43,27 +103,58 @@ const addProject = async (req, res) => {
         message: 'Project image upload failed'
       });
     }
+console.log(`techstack: ${techstack}`);
+
+    // Ensure techstack is always an array of strings
+    let formattedTechstack;
+    if (Array.isArray(techstack)) {
+      // If it's already an array, use it as-is
+      formattedTechstack = techstack;
+    } else if (typeof techstack === "string") {
+      // If it's a JSON string, parse it
+      try {
+        formattedTechstack = JSON.parse(techstack);
+        // Ensure all elements are strings
+        if (!Array.isArray(formattedTechstack)) {
+          throw new Error("Parsed techstack is not an array");
+        }
+      } catch (err) {
+        console.error("Error parsing techstack:", err);
+        return res.status(400).json({
+          success: false,
+          message: "Invalid format for techstack"
+        });
+      }
+    } else {
+      // If none of the above, return an error
+      return res.status(400).json({
+        success: false,
+        message: "Invalid format for techstack"
+      });
+    }
 
     const projectData = {
       title,
       description,
-      techstack,
+      techstack: formattedTechstack, // Use the formatted techstack
       githubRepo,
       liveLink,
       username: user.username,
       projectImage: projectImageUploadOnCloudinary || 'https://via.placeholder.com/300x300'
     };
+
     const project = new Project(projectData);
     const projectSavedData = await project.save();
+
     const cacheKey = `project_${username}`;
     cache.del(cacheKey);
+
     res.status(201).json({ message: 'Project created successfully', ProjectData: projectSavedData });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Get all projects
 const getProjects = async (req, res) => {
   try {
     const username = req.user.username;

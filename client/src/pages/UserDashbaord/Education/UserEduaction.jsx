@@ -78,7 +78,7 @@ export default function UserEducation() {
         <CardFooter className="flex justify-center space-x-4 mt-4">
           <Button 
             className="bg-blue-600 hover:bg-blue-700 text-white" 
-            disabled={isCreate} 
+            
             onClick={()=>handleCreate(formData)}
           >
             {isLoading ? 'Creating...' : 'Create'}
