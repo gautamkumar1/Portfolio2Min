@@ -1,5 +1,6 @@
 const User = require("../models/authModel");
-
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 300 });
 const register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -61,4 +62,35 @@ const logout = async (req, res) => {
         });
 }
 
-module.exports = { register, login,logout}
+const getEmail = async (req, res) => {
+    try {
+        const username = req.params.username;
+        if (!username) {
+            return res.status(400).json({ message: "Username parameter is missing" });
+        }
+        const cacheKey = `edu_${username}`;
+        console.log(`Cache key: ${cacheKey}`);
+        // Check if data exists in cache
+        const cachedData = cache.get(cacheKey);
+        if (cachedData) {
+            console.log('Serving from cache');
+            return res.status(200).json({
+                success: true,
+                userEmail: cachedData
+            });
+        }
+        const email = await User.findOne({ username }).select("email");
+        console.log(`TTL Limited Expire thats why serving from database`);
+        const emailObject = email.toObject();
+
+        cache.set(cacheKey, emailObject);
+        
+        if (!email) {
+            return res.status(404).json({ message: "Email not found" });
+        }
+        return res.status(200).json({ message: "Email found", userEmail: emailObject });
+    } catch (error) {
+        res.status(500).json({message:error.message});
+    }
+}
+module.exports = { register, login,logout,getEmail}
