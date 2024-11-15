@@ -61,7 +61,7 @@ const getEducation = async (req, res) => {
 
         const userId = req.user.id;
         const cacheKey = `edu_${userId}`;
-        console.log(`Cache key: ${cacheKey}`);
+        // console.log(`Cache key: ${cacheKey}`);
         // Check if data exists in cache
         const cachedData = cache.get(cacheKey);
         // console.log(`Cached data: ${cachedData}`);
@@ -104,7 +104,7 @@ const getEducationForPortfolio = async (req, res) => {
         }
 
         const cacheKey = `edu_${username}`;
-        console.log(`Cache key: ${cacheKey}`);
+        // console.log(`Cache key: ${cacheKey}`);
         // Check if data exists in cache
         const cachedData = cache.get(cacheKey);
 
@@ -156,7 +156,7 @@ const updateEducation = async (req, res) => {
             });
         }
         const userId = new mongoose.Types.ObjectId(req.user.id);
-        console.log(`User ID: ${userId}`);
+        // console.log(`User ID: ${userId}`);
         
         const education = await Education.findOneAndUpdate(
             { userId: userId }, 

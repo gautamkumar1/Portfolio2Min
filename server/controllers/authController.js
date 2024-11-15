@@ -69,7 +69,7 @@ const getEmail = async (req, res) => {
             return res.status(400).json({ message: "Username parameter is missing" });
         }
         const cacheKey = `edu_${username}`;
-        console.log(`Cache key: ${cacheKey}`);
+        // console.log(`Cache key: ${cacheKey}`);
         // Check if data exists in cache
         const cachedData = cache.get(cacheKey);
         if (cachedData) {

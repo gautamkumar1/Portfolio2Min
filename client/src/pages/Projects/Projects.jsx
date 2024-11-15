@@ -7,11 +7,11 @@ import { useProjectStore } from "../../Zustand/Project Store/useProjectStore"
 import { useEffect } from "react"
 export default function Projects() {
   const { username } = useParams();
-  console.log(`username : ${username}`);
+  // console.log(`username : ${username}`);
 
   const { data, loading, source, fetchProjectData} = useProjectStore();
-  console.log(`data : ${JSON.stringify(data)}`);
-  console.log(`source : ${source}`);
+  // console.log(`data : ${JSON.stringify(data)}`);
+  // console.log(`source : ${source}`);
 // console.log(`idAndCompanyRole : ${JSON.stringify(idAndCompanyRole)}`);
 
   useEffect(() => {

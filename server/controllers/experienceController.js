@@ -55,10 +55,10 @@ const getExperiences = async (req, res) => {
     }
 
     const username = req.user.username;
-    console.log(`Username: ${username}`);
+    // console.log(`Username: ${username}`);
 
     const cacheKey = `exp_${username}`;
-    console.log(`Cache key: ${cacheKey}`);
+    // console.log(`Cache key: ${cacheKey}`);
     // Check if data exists in cache
     const cachedData = cache.get(cacheKey);
     // console.log(`Cached data: ${cachedData}`);
@@ -101,7 +101,7 @@ const getExperienceForPortfolio = async (req, res) => {
     }
 
     const cacheKey = `exp_${username}`;
-    console.log(`Cache key: ${cacheKey}`);
+    // console.log(`Cache key: ${cacheKey}`);
     // Check if data exists in cache
     const cachedData = cache.get(cacheKey);
 

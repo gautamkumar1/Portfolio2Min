@@ -103,7 +103,7 @@ const addProject = async (req, res) => {
         message: 'Project image upload failed'
       });
     }
-console.log(`techstack: ${techstack}`);
+// console.log(`techstack: ${techstack}`);
 
     // Ensure techstack is always an array of strings
     let formattedTechstack;
@@ -158,7 +158,7 @@ console.log(`techstack: ${techstack}`);
 const getProjects = async (req, res) => {
   try {
     const username = req.user.username;
-    console.log(`Username: ${username}`);
+    // console.log(`Username: ${username}`);
 
     if (!username) {
       return res.status(400).json({
@@ -204,7 +204,7 @@ const getProjectsForPortfolio = async (req, res) => {
     }
 
     const cacheKey = `project_${username}`;
-    console.log(`Cache key: ${cacheKey}`);
+    // console.log(`Cache key: ${cacheKey}`);
     // Check if data exists in cache
     const cachedData = cache.get(cacheKey);
 
@@ -241,7 +241,7 @@ const getProjectsForPortfolio = async (req, res) => {
 const updateProject = async (req, res) => {
   try {
     const { _id } = req.body;
-    console.log(`_id: ${JSON.stringify(req.body)}`);
+    // console.log(`_id: ${JSON.stringify(req.body)}`);
     
 
     // Validate user authentication

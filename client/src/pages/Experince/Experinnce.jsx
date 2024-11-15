@@ -4,13 +4,13 @@ import { useParams } from "react-router-dom";
 
 export default function Experience() {
   const { username } = useParams();
-  console.log(`username : ${username}`);
+  // console.log(`username : ${username}`);
 
   const { data, loading, source, fetchExpData } = useExperienceStore();
-  console.log(`source : ${source}`);
+  // console.log(`source : ${source}`);
 
   useEffect(() => {
-    console.log(`data : ${JSON.stringify(data)}`);
+    // console.log(`data : ${JSON.stringify(data)}`);
     fetchExpData(username);
   }, [fetchExpData, username]);
 

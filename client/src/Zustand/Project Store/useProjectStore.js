@@ -63,7 +63,7 @@ const useProjectStoreforPost = create(
                     if (response.ok) {
                         toast.success("Project added successfully!");
                     } else {
-                        // console.log(`Error adding project: ${JSON.stringify(result)}`);
+                        console.log(`Error adding project: ${JSON.stringify(result)}`);
                         toast.error(result.message);
                     }
                 } catch (error) {

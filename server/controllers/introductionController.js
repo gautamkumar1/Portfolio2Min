@@ -119,7 +119,7 @@ exports.getIntroduction = async (req, res) => {
 
         const userId = req.user.id;
         const cacheKey = `intro_${userId}`;
-        console.log(`Cache key: ${cacheKey}`);
+        // console.log(`Cache key: ${cacheKey}`);
 
 
         // Check if data exists in cache
@@ -138,7 +138,7 @@ exports.getIntroduction = async (req, res) => {
         const introduction = await introductionModel.findOne({ userId: new mongoose.Types.ObjectId(userId) }).exec();
         console.log(`TTL Limited Expire thats why serving from database`);
 
-        console.log(`Introduction: ${introduction}`);
+        // console.log(`Introduction: ${introduction}`);
 
         if (!introduction) {
             return res.status(404).json({

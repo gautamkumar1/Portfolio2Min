@@ -6,11 +6,11 @@ import { useIntroductionStore } from "../../Zustand/Intro Store/useIntroductionS
 
 export default function Introduction() {
   const { username } = useParams();
-  console.log(`username : ${username}`);
+  // console.log(`username : ${username}`);
   
   const { data, loading, source, fetchIntroData } = useIntroductionStore();
-  console.log(`data : ${JSON.stringify(data)}`);
-  console.log(`source : ${source}`);
+  // console.log(`data : ${JSON.stringify(data)}`);
+  // console.log(`source : ${source}`);
 
   useEffect(() => {
     // Fetch the introduction data without a username parameter by default

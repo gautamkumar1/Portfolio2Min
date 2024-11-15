@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom';
 function Education() {
   const { username } = useParams();
   const { data, loading, source, fetchEduData } = useEducationStore();
-  console.log(`data : ${JSON.stringify(data)}`);
-  console.log(`source : ${source}`);
+  // console.log(`data : ${JSON.stringify(data)}`);
+  // console.log(`source : ${source}`);
   useEffect(() => {
     
     fetchEduData(username,); 

@@ -161,7 +161,7 @@ const useUserIntroStoreForPost = create(
             body: formData, // Send FormData as the body
           });
           const responseData = await response.json();
-          console.log(`responseData: ${JSON.stringify(responseData)}`);
+          // console.log(`responseData: ${JSON.stringify(responseData)}`);
           
           if (response.ok) {
             toast.success("Introduction updated successfully");

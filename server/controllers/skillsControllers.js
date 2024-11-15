@@ -34,7 +34,7 @@ const addSkill = async (req, res) => {
     };
 
     const existingSkill = await skillsModel.findOne({ userId: userId });
-    console.log(`existingSkill: ${existingSkill}`);
+    // console.log(`existingSkill: ${existingSkill}`);
     
     if (existingSkill) {
       return res.status(400).json({ message: "Skills already exists. Please update it instead." });
@@ -60,7 +60,7 @@ const getSkills = async (req, res) => {
 
     const userId = req.user.id;
     const cacheKey = `skill_${userId}`;
-    console.log(`Cache key: ${cacheKey}`);
+    // console.log(`Cache key: ${cacheKey}`);
     const cachedData = cache.get(cacheKey);
     if (cachedData) {
       console.log('Serving from cache');
@@ -98,7 +98,7 @@ const getSkillsForPortfolio = async (req, res) => {
     }
 
     const cacheKey = `skill_${username}`;
-    console.log(`Cache key: ${cacheKey}`);
+    // console.log(`Cache key: ${cacheKey}`);
     // Check if data exists in cache
     const cachedData = cache.get(cacheKey);
 
@@ -150,7 +150,7 @@ const updateSkill = async (req, res) => {
         });
     }
     const userId = new mongoose.Types.ObjectId(req.user.id);
-    console.log(`User ID: ${userId}`);
+    // console.log(`User ID: ${userId}`);
     
     const skill = await skillsModel.findOneAndUpdate(
         { userId: userId }, 

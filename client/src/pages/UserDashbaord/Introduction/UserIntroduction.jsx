@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useState } from 'react';
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { Input } from "../../../../components/ui/input";
@@ -37,11 +37,7 @@ export default function UserIntroduction() {
   const handleStatusChange = (value) => {
     setIntroData((prev) => ({ ...prev, status: value }));
   };
-  useEffect(() => {
-    console.log(`file : ${JSON.stringify(file)}`);
-    console.log(`introData : ${JSON.stringify(introData)}`);
-    
-  })
+
 
   return (
     <div className="w-full flex items-center justify-center p-4 overflow-y-auto">

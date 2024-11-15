@@ -78,7 +78,7 @@ export default function UserProjects() {
   };
 
   const handleUpdateClick = async () => {
-    console.log(`Project ID: ${projectId}`);
+    // console.log(`Project ID: ${projectId}`);
     
     if (isUpdateMode && projectId) {
       try {
@@ -130,7 +130,7 @@ export default function UserProjects() {
 
   const handleDropdownChange = (e) => {
     const selectedId = e.target.value;
-    console.log(`Selected ID: ${selectedId}`);
+    // console.log(`Selected ID: ${selectedId}`);
     
     setProjectId(selectedId);
   
