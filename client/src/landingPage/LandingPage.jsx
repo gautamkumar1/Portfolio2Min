@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
-import Faq from "../pages/Faq/Faq";
-import Features from "../pages/Features/Features"
-import HowItWorks from "../pages/How it works/HowItWorks"
-import { HeroVideoDialogDemoTopInBottomOut } from "./HeroVideo"
+import React, { Suspense } from "react";
+import { HeroVideoDialogDemoTopInBottomOut } from "./HeroVideo";
 import { SafariMockup } from "./SafariMockup";
+
+// Lazy load components
+const Faq = React.lazy(() => import("../pages/Faq/Faq"));
+const Features = React.lazy(() => import("../pages/Features/Features"));
+const HowItWorks = React.lazy(() => import("../pages/How it works/HowItWorks"));
 
 export default function LandingPage() {
   return (
@@ -24,11 +27,11 @@ export default function LandingPage() {
               <span className="absolute inset-0 bg-indigo-500 rounded-lg"></span>
               <div className="relative bg-zinc-950 border-2 border-indigo-500 rounded-lg transition-all duration-200 -translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0">
                 <Link to={"/login"}>
-                <div className="px-4 sm:px-6 py-3">
-                  <p className="text-base sm:text-lg font-semibold text-white whitespace-nowrap">
-                    Get Started
-                  </p>
-                </div>
+                  <div className="px-4 sm:px-6 py-3">
+                    <p className="text-base sm:text-lg font-semibold text-white whitespace-nowrap">
+                      Get Started
+                    </p>
+                  </div>
                 </Link>
               </div>
             </button>
@@ -56,19 +59,25 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="flex flex-col items-center space-y-4">
                 <span className="text-5xl">😟</span>
-                <p className="text-center text-gray-300">Struggling to stand out in a crowded job market</p>
+                <p className="text-center text-gray-300">
+                  Struggling to stand out in a crowded job market
+                </p>
                 <span className="text-gray-400">➔</span>
               </div>
 
               <div className="flex flex-col items-center space-y-4">
                 <span className="text-5xl">😕</span>
-                <p className="text-center text-gray-300">Unsure how to showcase skills effectively online</p>
+                <p className="text-center text-gray-300">
+                  Unsure how to showcase skills effectively online
+                </p>
                 <span className="text-gray-400">➔</span>
               </div>
 
               <div className="flex flex-col items-center space-y-4">
                 <span className="text-5xl">😞</span>
-                <p className="text-center text-gray-300">Missing out on opportunities due to poor online presence</p>
+                <p className="text-center text-gray-300">
+                  Missing out on opportunities due to poor online presence
+                </p>
               </div>
             </div>
 
@@ -76,23 +85,26 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-{/* Mockup */}
-<div>
-  <SafariMockup/>
-</div>
-      {/* How It Works Section */}
-      <div className="w-full">
-        <HowItWorks />
-      </div>
 
-      {/* Features Section - Now full width */}
-      <Features />
-
-      {/* FAQ */}
+      {/* Mockup */}
       <div>
-      <Faq/>
+        <SafariMockup />
       </div>
-    </div>
 
+      {/* How It Works Section */}
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="w-full">
+          <HowItWorks />
+        </div>
+
+        {/* Features Section */}
+        <Features />
+
+        {/* FAQ */}
+        <div>
+          <Faq />
+        </div>
+      </Suspense>
+    </div>
   );
 }

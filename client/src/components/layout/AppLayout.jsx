@@ -1,7 +1,9 @@
-import React from 'react';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import React, { Suspense, lazy } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+
+// Lazy load Navbar and Footer
+const Navbar = lazy(() => import('./Navbar'));
+const Footer = lazy(() => import('./Footer'));
 
 function AppLayout() {
   const location = useLocation();
@@ -15,9 +17,17 @@ function AppLayout() {
 
   return (
     <div>
-      {!hideLayout && <Navbar />}
+      {!hideLayout && (
+        <Suspense fallback={<div>Loading Navbar...</div>}>
+          <Navbar />
+        </Suspense>
+      )}
       <Outlet />
-      {!hideLayout && <Footer />}
+      {!hideLayout && (
+        <Suspense fallback={<div>Loading Footer...</div>}>
+          <Footer />
+        </Suspense>
+      )}
     </div>
   );
 }
