@@ -3,67 +3,6 @@ const Project = require("../models/projectModels");
 const NodeCache = require('node-cache');
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 const cache = new NodeCache({ stdTTL: 300 });
-// const addProject = async (req, res) => {
-//   const { title, description, techstack, githubRepo, liveLink, projectImage } = req.body;
-
-//   try {
-//     const username = req.user.username;
-//     const user = await User.findById(req.user.id).select('username');
-//     if (!user) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'User not found'
-//       });
-//     }
-//     let projectLocalPath;
-//     // console.log(`req.files: ${JSON.stringify(req.files)}`);
-
-
-//     if (
-//       req.files &&
-//       Array.isArray(req.files.projectImage) &&
-//       req.files.projectImage.length > 0
-//     ) {
-//       projectLocalPath = req.files.projectImage[0].path;
-//     }
-//     // console.log(`projectLocalPath: ${projectLocalPath}`);
-
-//     if (!projectLocalPath) {
-//       return res.status(400).json({
-//         success: false,
-//         message: 'Project image not found'
-//       });
-//     }
-//     const projectImageUploadOnCloudinary = await uploadOnCloudinary(projectLocalPath);
-//     // console.log(`projectImageUploadOnCloudinary: ${JSON.stringify(projectImageUploadOnCloudinary)}`);
-
-//     if (!projectImageUploadOnCloudinary) {
-//       return res.status(400).json({
-//         success: false,
-//         message: 'Project image upload failed'
-//       });
-//     }
-
-//     const projectData = {
-//       title,
-//       description,
-//       techstack,
-//       githubRepo,
-//       liveLink,
-//       username: user.username,
-//       projectImage: projectImageUploadOnCloudinary || 'https://via.placeholder.com/300x300'
-//     };
-//     const project = new Project(projectData);
-//     const projectSavedData = await project.save();
-//     const cacheKey = `project_${username}`;
-//     cache.del(cacheKey);
-//     res.status(201).json({ message: 'Project created successfully', ProjectData: projectSavedData });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// Get all projects
 
 const addProject = async (req, res) => {
   const { title, description, techstack, githubRepo, liveLink, projectImage } = req.body;
@@ -77,7 +16,8 @@ const addProject = async (req, res) => {
         message: 'User not found'
       });
     }
-
+    const cacheKey = `project_${username}`;
+    cache.del(cacheKey);
     let projectLocalPath;
 
     if (
@@ -145,9 +85,7 @@ const addProject = async (req, res) => {
 
     const project = new Project(projectData);
     const projectSavedData = await project.save();
-
-    const cacheKey = `project_${username}`;
-    cache.del(cacheKey);
+    
 
     res.status(201).json({ message: 'Project created successfully', ProjectData: projectSavedData });
   } catch (error) {
@@ -155,43 +93,84 @@ const addProject = async (req, res) => {
   }
 };
 
+// const getProjects = async (req, res) => {
+//   try {
+//     const username = req.user.username;
+//     // console.log(`Username: ${username}`);
+
+//     if (!username) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Username parameter is missing'
+//       });
+//     }
+//     const cacheKey = `project_${username}`;
+//     const cachedData = cache.get(cacheKey);
+//     if (cachedData) {
+//       console.log('Serving from cache');
+//       return res.status(200).json({
+//         success: true,
+//         data: cachedData
+//       });
+//     }
+//     console.log('Serving from database');
+
+//     const projects = await Project.find();
+//     if (!projects || projects.length === 0) {
+//       return res.status(404).json({ message: "Project record not found" });
+//     }
+//     const projectsObject = projects.map(project => project.toObject());
+
+//     cache.set(cacheKey, projectsObject);
+
+//     res.status(200).json({ success: true, data: projectsObject });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+// get Projects for portfolio
 const getProjects = async (req, res) => {
   try {
-    const username = req.user.username;
-    // console.log(`Username: ${username}`);
+    const username = req.user?.username;
 
     if (!username) {
       return res.status(400).json({
         success: false,
-        message: 'Username parameter is missing'
+        message: "Username parameter is missing",
       });
     }
+
     const cacheKey = `project_${username}`;
     const cachedData = cache.get(cacheKey);
+
     if (cachedData) {
-      console.log('Serving from cache');
+      console.log("Serving from cache");
       return res.status(200).json({
         success: true,
-        data: cachedData
+        data: cachedData,
       });
     }
-    console.log('Serving from database');
 
-    const projects = await Project.find();
+    console.log("Serving from database");
+
+    // Fetch user-specific projects
+    const projects = await Project.find({ username });
     if (!projects || projects.length === 0) {
       return res.status(404).json({ message: "Project record not found" });
     }
-    const projectsObject = projects.map(project => project.toObject());
 
-    cache.set(cacheKey, projectsObject);
+    const projectsObject = projects.map((project) => project.toObject());
+
+    // Cache data with TTL
+    cache.set(cacheKey, projectsObject, 300); // Cache for 300 seconds
 
     res.status(200).json({ success: true, data: projectsObject });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
-
-// get Projects for portfolio
 const getProjectsForPortfolio = async (req, res) => {
   try {
     const username = req.params.username;
@@ -253,7 +232,8 @@ const updateProject = async (req, res) => {
     }
 
     const username = req.user.username;
-
+    const cacheKey = `project_${username}`;
+    cache.del(cacheKey);
     // Check if _id is provided in the request body
     if (!_id) {
       return res.status(400).json({
@@ -320,8 +300,7 @@ const updateProject = async (req, res) => {
       });
     }
 
-    const cacheKey = `project_${username}`;
-    cache.del(cacheKey);
+    
 
     return res.status(200).json({
       success: true,

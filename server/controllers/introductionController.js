@@ -242,7 +242,9 @@ exports.updateIntroduction = async (req, res) => {
                 message: 'User not found',
             });
         }
-
+        // Clear cache
+        cache.del(`intro_${userId}`);
+        cache.del(`intro_${user.username}`);
         // Find existing introduction first
         const existingIntroduction = await introductionModel.findOne({ userId }).exec();
         if (!existingIntroduction) {
@@ -336,9 +338,7 @@ exports.updateIntroduction = async (req, res) => {
             }
         ).exec();
 
-        // Clear cache
-        cache.del(`intro_${userId}`);
-        cache.del(`intro_${user.username}`);
+        
 
         return res.status(200).json({
             success: true,

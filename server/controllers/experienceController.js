@@ -19,6 +19,7 @@ const addExperience = async (req, res) => {
         message: 'User not authenticated'
       });
     }
+    cache.del(`exp_${username}`);
     // Fetch username from the User model
     const user = await User.findById(req.user.id).select('username');
     if (!user) {
@@ -37,7 +38,7 @@ const addExperience = async (req, res) => {
     // Save the experience
     const experience = new Experience(experienceData);
     const savedExperience = await experience.save();
-    cache.del(`exp_${username}`);
+    
     res.status(201).json({ message: "Experience added successfully", experienceData: savedExperience });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -146,7 +147,8 @@ const updateExperience = async (req, res) => {
     }
 
     const username = req.user.username;
-
+    // Clear cache for this username
+    cache.del(`exp_${username}`);
     // Check if _id is provided in the request body
     if (!_id) {
       return res.status(400).json({
@@ -215,8 +217,7 @@ const updateExperience = async (req, res) => {
       });
     }
 
-    // Clear cache for this username
-    cache.del(`exp_${username}`);
+    
 
     return res.status(200).json({
       success: true,

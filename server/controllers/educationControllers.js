@@ -157,7 +157,8 @@ const updateEducation = async (req, res) => {
         }
         const userId = new mongoose.Types.ObjectId(req.user.id);
         // console.log(`User ID: ${userId}`);
-        
+        cache.del(`edu_${userId}`);
+        cache.del(`edu_${username}`);
         const education = await Education.findOneAndUpdate(
             { userId: userId }, 
             { collegeName, branchName, passoutYear },
@@ -168,8 +169,7 @@ const updateEducation = async (req, res) => {
         if (!education) {
             return res.status(404).json({ message: "Education record not found" });
         }
-        cache.del(`edu_${userId}`);
-        cache.del(`edu_${username}`);
+        
         return res.status(200).json({ message: "Education record updated", educationUpdated:education });
     } catch (error) {
         return res.status(500).json({ message: error.message });

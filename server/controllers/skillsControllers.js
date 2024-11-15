@@ -15,7 +15,10 @@ const addSkill = async (req, res) => {
         message: 'User not authenticated'
       });
     }
+    const username = req.user.username;
     const userId = new mongoose.Types.ObjectId(req.user.id);
+    cache.del(`skill_${userId}`);
+    cache.del(`skill_${username}`);
     const user = await User.findById(userId).select('username');
     if (!user) {
       return res.status(404).json({
@@ -151,7 +154,8 @@ const updateSkill = async (req, res) => {
     }
     const userId = new mongoose.Types.ObjectId(req.user.id);
     // console.log(`User ID: ${userId}`);
-    
+    cache.del(`skill_${userId}`);
+    cache.del(`skill_${username}`);
     const skill = await skillsModel.findOneAndUpdate(
         { userId: userId }, 
         {Languages, Tools, Databases, FrameworksAndLibraries},
@@ -162,8 +166,7 @@ const updateSkill = async (req, res) => {
     if (!skill) {
         return res.status(404).json({ message: "Skills record not found" });
     }
-    cache.del(`skill_${userId}`);
-    cache.del(`skill_${username}`);
+    
     return res.status(200).json({ message: "Skills record updated", skillsUpdated:skill });
 } catch (error) {
     return res.status(500).json({ message: error.message });

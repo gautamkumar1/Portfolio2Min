@@ -65,32 +65,53 @@ const logout = async (req, res) => {
 const getEmail = async (req, res) => {
     try {
         const username = req.params.username;
+
         if (!username) {
-            return res.status(400).json({ message: "Username parameter is missing" });
+            return res.status(400).json({ 
+                success: false, 
+                message: "Username parameter is missing" 
+            });
         }
+
         const cacheKey = `edu_${username}`;
-        // console.log(`Cache key: ${cacheKey}`);
         // Check if data exists in cache
         const cachedData = cache.get(cacheKey);
         if (cachedData) {
-            console.log('Serving from cache');
+            console.log("Serving from cache");
             return res.status(200).json({
                 success: true,
-                userEmail: cachedData
+                userEmail: cachedData,
             });
         }
+
+        // Fetch email from database
         const email = await User.findOne({ username }).select("email");
-        console.log(`TTL Limited Expire thats why serving from database`);
+
+        if (!email) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Email not found" 
+            });
+        }
+
+        console.log("Cache expired or not found, serving from database");
         const emailObject = email.toObject();
 
-        cache.set(cacheKey, emailObject);
-        
-        if (!email) {
-            return res.status(404).json({ message: "Email not found" });
-        }
-        return res.status(200).json({ message: "Email found", userEmail: emailObject });
+        // Cache the valid email data
+        cache.set(cacheKey, emailObject, 300); // Cache for 300 seconds
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Email found", 
+            userEmail: emailObject 
+        });
     } catch (error) {
-        res.status(500).json({message:error.message});
+        console.error(error);
+        return res.status(500).json({ 
+            success: false, 
+            message: error.message 
+        });
     }
-}
+};
+
 module.exports = { register, login,logout,getEmail}
