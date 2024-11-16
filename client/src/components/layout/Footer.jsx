@@ -21,13 +21,19 @@ const XIcon = (props) => {
   )
 }
 
-const DiscordIcon = (props) => {
+const LinkedInIcon = (props) => {
   return (
-    <svg viewBox="0 0 20 20" aria-hidden="true" {...props}>
-      <path d="M16.238 4.515a14.842 14.842 0 0 0-3.664-1.136.055.055 0 0 0-.059.027 10.35 10.35 0 0 0-.456.938 13.702 13.702 0 0 0-4.115 0 9.479 9.479 0 0 0-.464-.938.058.058 0 0 0-.058-.027c-1.266.218-2.497.6-3.664 1.136a.052.052 0 0 0-.024.02C1.4 8.023.76 11.424 1.074 14.782a.062.062 0 0 0 .024.042 14.923 14.923 0 0 0 4.494 2.272.058.058 0 0 0 .064-.02c.346-.473.654-.972.92-1.496a.057.057 0 0 0-.032-.08 9.83 9.83 0 0 1-1.404-.669.058.058 0 0 1-.029-.046.058.058 0 0 1 .023-.05c.094-.07.189-.144.279-.218a.056.056 0 0 1 .058-.008c2.946 1.345 6.135 1.345 9.046 0a.056.056 0 0 1 .059.007c.09.074.184.149.28.22a.058.058 0 0 1 .023.049.059.059 0 0 1-.028.046 9.224 9.224 0 0 1-1.405.669.058.058 0 0 0-.033.033.056.056 0 0 0 .002.047c.27.523.58 1.022.92 1.495a.056.056 0 0 0 .062.021 14.878 14.878 0 0 0 4.502-2.272.055.055 0 0 0 .016-.018.056.056 0 0 0 .008-.023c.375-3.883-.63-7.256-2.662-10.246a.046.046 0 0 0-.023-.021Zm-9.223 8.221c-.887 0-1.618-.814-1.618-1.814s.717-1.814 1.618-1.814c.908 0 1.632.821 1.618 1.814 0 1-.717 1.814-1.618 1.814Zm5.981 0c-.887 0-1.618-.814-1.618-1.814s.717-1.814 1.618-1.814c.908 0 1.632.821 1.618 1.814 0 1-.71 1.814-1.618 1.814Z" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M20.452 2H3.548C2.692 2 2 2.687 2 3.539v16.923C2 21.313 2.692 22 3.548 22h16.905c.857 0 1.548-.687 1.548-1.538V3.539C22 2.687 21.309 2 20.452 2ZM8.471 19.408H5.647V9.776h2.824v9.632ZM7.058 8.507c-.903 0-1.635-.732-1.635-1.634 0-.903.732-1.634 1.635-1.634s1.635.731 1.635 1.634c0 .902-.732 1.634-1.635 1.634ZM18.353 19.408h-2.824v-4.774c0-1.137-.023-2.598-1.582-2.598-1.583 0-1.827 1.238-1.827 2.518v4.854H9.297V9.776h2.713v1.316h.037c.378-.713 1.3-1.464 2.68-1.464 2.87 0 3.403 1.892 3.403 4.354v5.426Z" />
     </svg>
-  )
-}
+  );
+};
+
 
 const SocialLink = ({
   href,
@@ -56,7 +62,7 @@ const Footer = () => {
         <p className="flex-1 text-center text-xs md:text-sm text-gray-300 dark:text-gray-400">
           &copy; {new Date().getFullYear()}{' '}
           <a
-            href="https://twitter.com/justansub"
+            href="https://x.com/xXGauTamxX_"
             className="text-green-500 font-semibold underline hover:text-red-500"
             target="_blank"
             rel="noopener noreferrer"
@@ -67,14 +73,14 @@ const Footer = () => {
         
         {/* Right-aligned Social Links */}
         <div className="flex-1 flex justify-center md:justify-end gap-4">
-          <SocialLink href="https://twitter.com/justansub" icon={XIcon} className="text-gray-400 hover:text-blue-500">
+          <SocialLink href="https://x.com/xXGauTamxX_" icon={XIcon} className="text-gray-400 hover:text-blue-500">
             X
           </SocialLink>
-          <SocialLink href="http://github.com/ansub" icon={GitHubIcon} className="text-gray-400 hover:text-white">
+          <SocialLink href="https://github.com/gautamkumar1" icon={GitHubIcon} className="text-gray-400 hover:text-white">
             GitHub
           </SocialLink>
-          <SocialLink href="https://discord.gg/P8GXYyH3ZU" icon={DiscordIcon} className="text-gray-400 hover:text-purple-500">
-            Discord
+          <SocialLink href="https://www.linkedin.com/in/gautamkum4r/" icon={LinkedInIcon} className="text-gray-400 hover:text-purple-500">
+          LinkedIn
           </SocialLink>
         </div>
       </div>
